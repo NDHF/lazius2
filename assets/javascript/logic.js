@@ -491,3 +491,11 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 });
+
+/* 
+Things to add:
+- Limit user input on quantity
+- Limit user input on categories
+- Add new-database function (will take a while)
+- Place data structure (parameters) inside database. 
+*/
