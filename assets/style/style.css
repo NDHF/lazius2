@@ -9,6 +9,16 @@ div#container {
     padding-top: 15%;
 }
 
+ul.inlineList li {
+    display: inline;
+    margin-right: 15px;
+}
+
+td.highlightRed {
+    background-color: red;
+    color: white;
+}
+
 div#inputContainer {
     text-align: center;
     width: 50%;
@@ -25,7 +35,7 @@ div#outputDiv {
     margin-top: 20px;
 }
 
-div#outputDiv h2 {
+div#outputDiv h2, .center {
     text-align: center;
 }
 
