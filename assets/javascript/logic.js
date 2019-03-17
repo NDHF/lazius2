@@ -176,6 +176,37 @@ document.addEventListener("DOMContentLoaded", function () {
     // END
 
     // CORE COMMAND FUNCTIONS START
+    function importDB(input) {
+        if (database.length > 0) {
+            getById("input").disabled = true;
+            userPrompt("You are already working with a database." +
+            "<br>" +
+            "If you would like to switch to another database," +
+            "<br>" +
+            "Save current database, reload page, and run import." +
+            "<br>" +
+            "Press Enter to Continue");
+            functionCurrentlyRunning = "standby";
+        } else {
+            if (input === "functionLaunched") {
+                getById("input").disabled = true;
+                let importTextArea = document.createElement("TEXTAREA");
+                importTextArea.id = "importTextArea";
+                getById("outputDiv").appendChild(importTextArea);
+                getById("importTextArea").focus();
+                userPrompt("Paste stringified JSON database below and hit 'Enter'");
+            } else {
+                let parsedTextArea = JSON.parse(getById("importTextArea").value);
+                console.log(parsedTextArea);
+                getById("input").disabled = true;
+                getById("outputDiv").innerHTML = "";
+                database = parsedTextArea;
+                console.log(database);
+                userPrompt("Database imported. Press 'Enter' to continue.");
+                functionCurrentlyRunning = "standby";
+            }
+        }
+    };
     function search(input) {
         getById("input").disabled = false;
         function searchFunctionChain(objectArray) {
@@ -387,10 +418,12 @@ document.addEventListener("DOMContentLoaded", function () {
             search("functionLaunched");
         } else if (input === "param") {
             showParameters();
-        } else if (input == "print") {
+        } else if (input === "print") {
             printDatabase("functionLaunched");
         } else if (input === "edit") {
             edit("functionLaunched");
+        } else if (input === "import") {
+            importDB("functionLaunched");
         }
     };
     function applyInputToFunction(input) {
@@ -402,6 +435,8 @@ document.addEventListener("DOMContentLoaded", function () {
             printDatabase(input);
         } else if (functionCurrentlyRunning === "edit") {
             edit(input);
+        } else if (functionCurrentlyRunning === "import") {
+            importDB(input);
         }
     };
     // CORE FUNCTION MANAGEMENT END
