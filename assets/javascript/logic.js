@@ -412,7 +412,11 @@ document.addEventListener("DOMContentLoaded", function () {
                             objectArray.forEach(function (item, index) {
                                 if (item !== "") {
                                     if (parameters[index].parameterInputType === "number") {
-                                        editingObject[parameters[index].parameterName] = parseInt(item);
+                                        let objectArrayItem = parseInt(item);
+                                        if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
+                                            objectArrayItem = 0;
+                                        }
+                                        editingObject[parameters[index].parameterName] = item;
                                     } else {
                                         editingObject[parameters[index].parameterName] = item;
                                     }
@@ -476,7 +480,11 @@ document.addEventListener("DOMContentLoaded", function () {
             let i;
             for (i = 0; i < objectArray.length - 1; i += 1) {
                 if (parameters[i].parameterInputType === "number") {
-                    object[parameters[i].parameterName] = parseInt(objectArray[i]);
+                    let objectArrayItem = parseInt(objectArray[i]);
+                    if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
+                        objectArrayItem = 0
+                    }
+                    object[parameters[i].parameterName] = objectArrayItem;
                 } else {
                     object[parameters[i].parameterName] = objectArray[i];
                 }
