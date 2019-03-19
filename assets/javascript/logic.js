@@ -8,6 +8,13 @@ console.log(
 document.addEventListener("DOMContentLoaded", function () {
     // GLOBAL VARIABLES START
     let database = [];
+    /*
+        let database = {
+            datastructureArray: [],
+            databaseArray: [],
+            bufferArray: []
+        }
+    */
     let objectArray = [];
     let functionCurrentlyRunning = "standby";
     let parameters = [{
@@ -55,10 +62,13 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         {
             parameterName: "id",
-            parameterToDisplay: "id",
-            parameterNotes: "<i>e.g.</i> Book, Audiobook",
-            parameterInputType: "input"
+            parameterToDisplay: "ID",
+            parameterNotes: "",
+            parameterInputType: "number"
         }
+    ];
+    let arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
+        "param", "print", "commands"
     ];
     // GLOBAL VARIABLES END
 
@@ -66,13 +76,15 @@ document.addEventListener("DOMContentLoaded", function () {
     function getById(id) {
         return document.getElementById(id);
     };
+
     function userPrompt(messageForUser) {
         getById("userPrompt").innerHTML = messageForUser;
     };
-        //     THIS FUNCTION ALLOWS USER TO QUIT WHEN A NUMBER-TYPE INPUT IS
-        // BEING USED, WHILE ALSO LIMITING USER INPUT.
+    //     THIS FUNCTION ALLOWS USER TO QUIT WHEN A NUMBER-TYPE INPUT IS
+    // BEING USED, WHILE ALSO LIMITING USER INPUT.
     function listenForQuit() {
         if (event.key === "q") {
+            document.removeEventListener("keyup", enterLogic);
             getById("input").type = "input";
             getById("input").value = "q";
             getById("input").maxLength = "1";
@@ -85,12 +97,15 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if ((event.key === "t") && (getById("input").value === "qui")) {
             getById("input").value = "quit";
             getById("input").maxLength = "4";
-        } else if ((event.key === "Backspace") && (getById("input").maxLength > 0)) {
-            getById("input").maxLength = parseInt(getById("input").maxLength - 1);
+            document.addEventListener("keyup", enterLogic);
+        } else if (event.key === "Backspace") {
+            getById("input").removeAttribute("maxLength");
+            getById("input").type = "number";
+            document.addEventListener("keyup", enterLogic);
         }
     }
-        //     THIS FUNCTION WILL PREVENT A FUNCTION FROM RUNNING, IF THE FUNCTION
-        // RELIES ON A DATABASE
+    //     THIS FUNCTION WILL PREVENT A FUNCTION FROM RUNNING, IF THE FUNCTION
+    // RELIES ON A DATABASE
     function noDBErrorCatch() {
         getById("input").disabled = true;
         userPrompt("Error: No database exists." +
@@ -100,12 +115,15 @@ document.addEventListener("DOMContentLoaded", function () {
             "Press Enter to Continue");
         functionCurrentlyRunning = "standby";
     };
+
     function displaySearchResults(searchResultsArray, parentFunction) {
+        console.log("Made it here");
         let resultsHeader = document.createElement("H2");
         let numberOfResults = 0;
         if (parentFunction === "search") {
             if (searchResultsArray.length === 0) {
                 numberOfResults = "Your search returned no results.";
+
             } else if (searchResultsArray.length === 1) {
                 numberOfResults = "Your search returned one result.";
             } else {
@@ -115,6 +133,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (parentFunction === "add") {
             numberOfResults = "The following title was added to your database: ";
         } else if (parentFunction === "edit") {
+            console.log("Made it here");
             numberOfResults = "Item Currently Being Edited";
         } else if (parentFunction === "editedItem") {
             numberOfResults = "Review Changes Below";
@@ -123,14 +142,16 @@ document.addEventListener("DOMContentLoaded", function () {
         resultsHeader.appendChild(numberOfResultsText);
         getById("outputDiv").appendChild(resultsHeader);
         let searchResultsTable = document.createElement("TABLE");
-        let parametersTableRow = document.createElement("TR");
-        parameters.forEach(function (item) {
-            let parameterTH = document.createElement("TH");
-            let parameterTHText = document.createTextNode(item.parameterToDisplay);
-            parameterTH.appendChild(parameterTHText);
-            parametersTableRow.appendChild(parameterTH);
-        });
-        searchResultsTable.appendChild(parametersTableRow);
+        if (searchResultsArray.length > 0) {
+            let parametersTableRow = document.createElement("TR");
+            parameters.forEach(function (item) {
+                let parameterTH = document.createElement("TH");
+                let parameterTHText = document.createTextNode(item.parameterToDisplay);
+                parameterTH.appendChild(parameterTHText);
+                parametersTableRow.appendChild(parameterTH);
+            });
+            searchResultsTable.appendChild(parametersTableRow);
+        }
         searchResultsArray.forEach(function (searchResultItem, searchResultIndex) {
             if (parentFunction === "editedItem") {
                 let tableCaptionRow = document.createElement("TR");
@@ -180,12 +201,12 @@ document.addEventListener("DOMContentLoaded", function () {
         if (database.length > 0) {
             getById("input").disabled = true;
             userPrompt("You are already working with a database." +
-            "<br>" +
-            "If you would like to switch to another database," +
-            "<br>" +
-            "Save current database, reload page, and run import." +
-            "<br>" +
-            "Press Enter to Continue");
+                "<br>" +
+                "If you would like to switch to another database," +
+                "<br>" +
+                "Save current database, reload page, and run import." +
+                "<br>" +
+                "Press Enter to Continue");
             functionCurrentlyRunning = "standby";
         } else {
             if (input === "functionLaunched") {
@@ -207,8 +228,12 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     };
+
     function search(input) {
+        getById("input").type = "input";
+        getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").disabled = false;
+
         function searchFunctionChain(objectArray) {
             function searchFunction(searchObject) {
                 let searchResultsArray = [];
@@ -231,7 +256,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 let searchObject = {};
                 objectArray.forEach(function (item, index) {
                     if (item !== "") {
-                        if ((parameters[index].parameterName === "quantity") || (parameters[index].parameterName === "id")) {
+                        if (parameters[index].parameterInputType === "number") {
                             searchObject[parameters[index].parameterName] = parseInt(item);
                         } else {
                             searchObject[parameters[index].parameterName] = item;
@@ -249,6 +274,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 objectArray.push(input);
             }
             if (objectArray.length < parameters.length) {
+                if (parameters[objectArray.length].parameterInputType === "number") {
+                    getById("input").type = "number";
+                    getById("input").select();
+                    getById("input").addEventListener("keyup", listenForQuit);
+                }
                 userPrompt(parameters[objectArray.length].parameterToDisplay + " to search for:");
             } else if (objectArray.length === parameters.length) {
                 getById("input").disabled = true;
@@ -261,6 +291,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
     function showParameters() {
         functionCurrentlyRunning = "standby";
         let parameterUL = document.createElement("UL");
@@ -276,24 +307,79 @@ document.addEventListener("DOMContentLoaded", function () {
             "current data structure." + "<br>" +
             "Please enter a function name to begin.");
     }
+
+    function printCommands() {
+        functionCurrentlyRunning = "standby";
+        let commandArray = [{
+                explanation: "Add to Inventory: ",
+                name: "add"
+            },
+            {
+                explanation: "Edit an item: ",
+                name: "edit"
+            },
+            {
+                explanation: "Search inventory: ",
+                name: "search"
+            },
+            {
+                explanation: "Import an existing inventory: ",
+                name: "Import"
+            },
+            {
+                explanation: "Show list of inventory parameters: ",
+                name: "param"
+            },
+            {
+                explanation: "Print inventory To clipboard: ",
+                name: "print"
+            },
+            {
+                explanation: "Undo last entry: ",
+                name: "undo"
+            },
+            {
+                explanation: "Quit current function: ",
+                name: "quit"
+            }
+        ];
+        let commandHeading = document.createElement("H2");
+        commandHeadingText = document.createTextNode("Available Commands:");
+        commandHeading.appendChild(commandHeadingText);
+        getById("outputDiv").appendChild(commandHeading);
+        let commandTable = document.createElement("TABLE");
+        commandArray.forEach(function (item) {
+            let commandTR = document.createElement("TR");
+            let explanationTD = document.createElement("TD");
+            explanationTD.classList.add("alignRight");
+            explanationTDText = document.createTextNode(item.explanation);
+            explanationTD.appendChild(explanationTDText);
+            commandTR.appendChild(explanationTD);
+            let nameTD = document.createElement("TD");
+            nameTDText = document.createTextNode(item.name);
+            nameTD.appendChild(nameTDText);
+            commandTR.appendChild(nameTD);
+            commandTable.appendChild(commandTR);
+        });
+        getById("outputDiv").appendChild(commandTable);
+    };
+
     function edit(input) {
+
         if (database.length === 0) {
             noDBErrorCatch();
         } else {
             getById("input").removeEventListener("keyup", listenForQuit);
             if (input === "functionLaunched") {
                 getById("input").type = "number";
-                userPrompt("Enter ID of item you wish to edit");
                 getById("input").addEventListener("keyup", listenForQuit);
+                userPrompt("Enter ID of item you wish to edit");
             } else {
-                getById("input").removeEventListener("keyup", listenForQuit);
-                getById("input").removeAttribute("maxLength");
-                if ((input.charAt(0) === "q") && (input !== "quit")) {
-                    functionLauncher("edit");
-                } else if (getById("input").type === "number") {
+                if ((getById("input").type === "number") && (objectArray.length === 0)) {
                     if (input === "") {
                         functionLauncher("edit");
                     } else {
+                        getById("input").removeEventListener("keyup", listenForQuit);
                         let idInput = parseInt(input);
                         getById("input").type = "input";
                         displaySearchResults([database[idInput - 1]], "edit");
@@ -304,12 +390,19 @@ document.addEventListener("DOMContentLoaded", function () {
                         objectArray.push(input);
                     }
                     if (objectArray.length < (parameters.length - 1)) {
+                        if (parameters[objectArray.length].parameterInputType === "number") {
+                            getById("input").type = "number";
+                            getById("input").addEventListener("keyup", listenForQuit);
+                        }
                         let editMessage = ", <br> or else, leave blank.";
                         userPrompt("Edit " + parameters[objectArray.length].parameterToDisplay + editMessage);
                     } else if (objectArray.length === (parameters.length - 1)) {
+                        getById("input").type = "input";
+                        getById("input").removeEventListener("keyup", listenForQuit);
                         getById("input").disabled = true;
                         objectArray.push(input);
                         userPrompt("Entry complete.");
+
                         function applyEdits() {
                             let editedObjectId = parseInt(getById("searchResultID").innerHTML);
                             let comparisonArray = [];
@@ -318,7 +411,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             let editingObject = {};
                             objectArray.forEach(function (item, index) {
                                 if (item !== "") {
-                                    if (parameters[index] === "quantity") {
+                                    if (parameters[index].parameterInputType === "number") {
                                         editingObject[parameters[index].parameterName] = parseInt(item);
                                     } else {
                                         editingObject[parameters[index].parameterName] = item;
@@ -347,6 +440,7 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
     function printDatabase(input) {
         getById("input").disabled = false;
         if (input === "functionLaunched") {
@@ -371,13 +465,17 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     }
+
     function add(input) {
+        getById("input").removeEventListener("keyup", listenForQuit);
+        getById("input").type = "input";
         getById("input").disabled = false;
+
         function convertObjectArrayToObject() {
             let object = {};
             let i;
             for (i = 0; i < objectArray.length - 1; i += 1) {
-                if ((parameters[i].parameterName === "quantity") || (parameters[i].parameterName === "id")) {
+                if (parameters[i].parameterInputType === "number") {
                     object[parameters[i].parameterName] = parseInt(objectArray[i]);
                 } else {
                     object[parameters[i].parameterName] = objectArray[i];
@@ -392,6 +490,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         if (objectArray.length < parameters.length) {
             userPrompt("Add " + parameters[objectArray.length].parameterToDisplay + ":");
+            if (parameters[objectArray.length].parameterName === "quantity") {
+                getById("input").type = "number";
+                getById("input").value = "0";
+                getById("input").select();
+                getById("input").addEventListener("keyup", listenForQuit);
+                getById("input").min = "0";
+            }
             if (parameters[objectArray.length].parameterName === "id") {
                 getById("input").disabled = true;
                 userPrompt("ID Automatically added.");
@@ -406,7 +511,7 @@ document.addEventListener("DOMContentLoaded", function () {
             getById("outputDiv").innerHTML = "";
             functionLauncher("add");
         }
-    }
+    };
     // CORE COMMAND FUNCTIONS END
 
     // CORE FUNCTION MANAGEMENT START
@@ -424,9 +529,13 @@ document.addEventListener("DOMContentLoaded", function () {
             edit("functionLaunched");
         } else if (input === "import") {
             importDB("functionLaunched");
+        } else if (input === "commands") {
+            printCommands();
         }
     };
+
     function applyInputToFunction(input) {
+        console.log("function running at applyInputToFunction: " + functionCurrentlyRunning);
         if (functionCurrentlyRunning === "add") {
             add(input);
         } else if (functionCurrentlyRunning === "search") {
@@ -443,14 +552,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // CORE INPUT LOGIC
     function coreInputLogic(input) {
+        getById("input").value = "";
         getById("input").disabled = false;
         let functionIsRunning = (functionCurrentlyRunning !== "standby");
-        let arrayOfFunctionNames = ["add", "edit", "new",
-            "search", "import", "param", "print"];
+
         function undoLogic() {
             objectArray.pop();
             functionLauncher(functionCurrentlyRunning);
         }
+
         function quitLogic() {
             getById("input").value = "";
             objectArray = [];
@@ -458,6 +568,7 @@ document.addEventListener("DOMContentLoaded", function () {
             getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
             userPrompt("Please enter a function name to begin");
+            printCommands();
         }
         if (functionIsRunning) {
             let inputIsUndo = (input === "undo");
@@ -482,20 +593,36 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
     // MAIN EVENT LISTENER
-    document.addEventListener("keyup", function (event) {
+    function enterLogic() {
         if (event.key === "Enter") {
+            console.log("function running at keyup: " + functionCurrentlyRunning);
             let input = getById("input").value;
             coreInputLogic(input);
-            getById("input").value = "";
             getById("input").focus();
         }
-    });
+    }
+    document.addEventListener("keyup", enterLogic);
+    printCommands();
 });
+
 
 /* 
 Things to add:
-- Limit user input on quantity
-- Limit user input on categories
 - Add new-database function (will take a while)
 - Place data structure (parameters) inside database. 
+
+- Parameters I would like:
+    - Title
+    - Author, Last Name
+    - Author, First Name
+    - Category
+    - Media Type
+        - Book
+        - Audiobook, CD
+        - Audiobook, Cassette
+    - Read
+        - Yes
+        - No
+    - Location
+
 */

@@ -19,6 +19,14 @@ td.highlightRed {
     color: white;
 }
 
+td.alignRight {
+    text-align: right;
+}
+
+header {
+    margin-top: 100px;
+}
+
 div#inputContainer {
     text-align: center;
     width: 50%;
