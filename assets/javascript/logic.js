@@ -7,69 +7,14 @@ console.log(
 // EVENT LISTENER WRAPPER
 document.addEventListener("DOMContentLoaded", function () {
     // GLOBAL VARIABLES START
-    let database = [];
-    /*
-        let database = {
-            datastructureArray: [],
-            databaseArray: [],
-            bufferArray: []
-        }
-    */
-    let objectArray = [];
+    let database;
     let functionCurrentlyRunning = "standby";
-    let parameters = [{
-            parameterName: "title",
-            parameterToDisplay: "Title",
-            parameterNotes: "Please place articles (the, a, an) at the end, " +
-                "preceded by a comma.",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "authorLastName",
-            parameterToDisplay: "Author, Last Name",
-            parameterNotes: "",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "authorFirstName",
-            parameterToDisplay: "Author, First Name",
-            parameterNotes: "Place middle names after first name.",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "mediaType",
-            parameterToDisplay: "Media Type",
-            parameterNotes: "<i>e.g.</i> Book, Audiobook",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "category",
-            parameterToDisplay: "Category",
-            parameterNotes: "",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "subCategory",
-            parameterToDisplay: "Sub-Category",
-            parameterNotes: "",
-            parameterInputType: "input"
-        },
-        {
-            parameterName: "quantity",
-            parameterToDisplay: "Quantity",
-            parameterNotes: "",
-            parameterInputType: "number"
-        },
-        {
-            parameterName: "id",
-            parameterToDisplay: "ID",
-            parameterNotes: "",
-            parameterInputType: "number"
-        }
-    ];
-    let arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
+    const arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
         "param", "print", "commands"
     ];
+
+    let keylogArray = [];
+
     // GLOBAL VARIABLES END
 
     // FUNCTIONS USED BY THE CORE COMMAND FUNCTIONS
@@ -80,6 +25,18 @@ document.addEventListener("DOMContentLoaded", function () {
     function userPrompt(messageForUser) {
         getById("userPrompt").innerHTML = messageForUser;
     };
+
+    function printSomething(variable) {
+        let arrayExportTextArea = document.createElement("TEXTAREA");
+        arrayExportTextArea.id = "dbExport";
+        let stringifiedArray = JSON.stringify(variable);
+        arrayExportTextArea.value = stringifiedArray;
+        getById("outputDiv").appendChild(arrayExportTextArea);
+        getById("dbExport").select();
+        document.execCommand("copy");
+        getById("outputDiv").innerHTML = "";
+    };
+
     //     THIS FUNCTION ALLOWS USER TO QUIT WHEN A NUMBER-TYPE INPUT IS
     // BEING USED, WHILE ALSO LIMITING USER INPUT.
     function listenForQuit() {
@@ -108,8 +65,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // RELIES ON A DATABASE
     function noDBErrorCatch() {
         getById("input").disabled = true;
-        userPrompt("Error: No database exists." +
-            "<br>" +
+        userPrompt("Error: No database exists, " + "<br>" +
+            "Or there are no items in the database." + "<br>" +
             "A database must exist before printing to clipboard" +
             "<br>" +
             "Press Enter to Continue");
@@ -142,7 +99,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let searchResultsTable = document.createElement("TABLE");
         if (searchResultsArray.length > 0) {
             let parametersTableRow = document.createElement("TR");
-            parameters.forEach(function (item) {
+            database.dataStructureArray.forEach(function (item) {
                 let parameterTH = document.createElement("TH");
                 let parameterTHText = document.createTextNode(item.parameterToDisplay);
                 parameterTH.appendChild(parameterTHText);
@@ -156,7 +113,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 tableCaptionRow.classList.add("captionRow");
                 let tableCaptionTD = document.createElement("TD");
                 tableCaptionRow.classList.add("center");
-                tableCaptionTD.colSpan = parameters.length;
+                tableCaptionTD.colSpan = database.dataStructureArray.length;
                 let tableCaptionText;
                 if (searchResultIndex === 0) {
                     tableCaptionText = document.createTextNode("BEFORE:");
@@ -174,7 +131,7 @@ document.addEventListener("DOMContentLoaded", function () {
             if (parentFunction !== "editedItem") {
                 searchResultsTR.id = "itemToBeEdited";
             }
-            parameters.forEach(function (param, index) {
+            database.dataStructureArray.forEach(function (param, index) {
                 let searchResultsTD = document.createElement("TD");
                 if ((parentFunction === "editedItem") && (searchResultIndex === 1)) {
                     if (searchResultsArray[1][param.parameterName] !== searchResultsArray[0][param.parameterName]) {
@@ -196,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // CORE COMMAND FUNCTIONS START
     function importDB(input) {
-        if (database.length > 0) {
+        if (database !== undefined) {
             getById("input").disabled = true;
             userPrompt("You are already working with a database." +
                 "<br>" +
@@ -234,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
             function searchFunction(searchObject) {
                 let searchResultsArray = [];
                 let arrayOfSearchObjectKeys = Object.keys(searchObject);
-                database.forEach(function (databaseItem) {
+                database.databaseArray.forEach(function (databaseItem) {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
                         if (typeof databaseItem[searchObjectItem] === "string") {
@@ -261,36 +218,36 @@ document.addEventListener("DOMContentLoaded", function () {
                 let searchObject = {};
                 objectArray.forEach(function (item, index) {
                     if (item !== "") {
-                        if (parameters[index].parameterInputType === "number") {
-                            searchObject[parameters[index].parameterName] = parseInt(item);
+                        if (database.dataStructureArray[index].parameterInputType === "number") {
+                            searchObject[database.dataStructureArray[index].parameterName] = parseInt(item);
                         } else {
-                            searchObject[parameters[index].parameterName] = item;
+                            searchObject[database.dataStructureArray[index].parameterName] = item;
                         }
                     }
                 });
                 searchFunction(searchObject);
             }
-            buildSearchObject(objectArray);
+            buildSearchObject(database.bufferArray);
         }
-        if (database.length === 0) {
+        if ((database === undefined) || (database.databaseArray.length === 0)) {
             noDBErrorCatch();
         } else {
             if (input !== "functionLaunched") {
-                objectArray.push(input);
+                database.bufferArray.push(input);
             }
-            if (objectArray.length < parameters.length) {
-                if (parameters[objectArray.length].parameterInputType === "number") {
+            if (database.bufferArray.length < database.dataStructureArray.length) {
+                if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "number") {
                     getById("input").type = "number";
                     getById("input").select();
                     getById("input").addEventListener("keyup", listenForQuit);
                 }
-                userPrompt(parameters[objectArray.length].parameterToDisplay + " to search for:");
-            } else if (objectArray.length === parameters.length) {
+                userPrompt(database.dataStructureArray[database.bufferArray.length].parameterToDisplay + " to search for:");
+            } else if (database.bufferArray.length === database.dataStructureArray.length) {
                 getById("input").disabled = true;
                 userPrompt("See search results below");
-                searchFunctionChain(objectArray);
-            } else if (objectArray.length > parameters.length) {
-                objectArray = [];
+                searchFunctionChain(database.bufferArray);
+            } else if (database.bufferArray.length > database.dataStructureArray.length) {
+                database.bufferArray = [];
                 getById("outputDiv").innerHTML = "";
                 functionLauncher("search");
             }
@@ -301,9 +258,9 @@ document.addEventListener("DOMContentLoaded", function () {
         functionCurrentlyRunning = "standby";
         let parameterUL = document.createElement("UL");
         parameterUL.classList.add("inlineList");
-        parameters.forEach(function (parameter) {
+        database.dataStructureArray.forEach(function (parameter) {
             let parameterLI = document.createElement("LI");
-            let parameterText = document.createTextNode(parameter.parameterToDisplay + "<br>" + parameter.parameterNotes);
+            let parameterText = document.createTextNode(parameter.parameterToDisplay);
             parameterLI.appendChild(parameterText);
             parameterUL.appendChild(parameterLI);
         });
@@ -371,7 +328,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function edit(input) {
 
-        if (database.length === 0) {
+        if (database.databaseArray.length === 0) {
             noDBErrorCatch();
         } else {
             getById("input").removeEventListener("keyup", listenForQuit);
@@ -380,58 +337,58 @@ document.addEventListener("DOMContentLoaded", function () {
                 getById("input").addEventListener("keyup", listenForQuit);
                 userPrompt("Enter ID of item you wish to edit");
             } else {
-                if ((getById("input").type === "number") && (objectArray.length === 0)) {
+                if ((getById("input").type === "number") && (database.bufferArray.length === 0)) {
                     if (input === "") {
                         functionLauncher("edit");
                     } else {
                         getById("input").removeEventListener("keyup", listenForQuit);
                         let idInput = parseInt(input);
                         getById("input").type = "input";
-                        displaySearchResults([database[idInput - 1]], "edit");
+                        displaySearchResults([database.databaseArray[idInput - 1]], "edit");
                         edit("beginEditing");
                     }
                 } else {
                     if (input !== "beginEditing") {
-                        objectArray.push(input);
+                        database.bufferArray.push(input);
                     }
-                    if (objectArray.length < (parameters.length - 1)) {
-                        if (parameters[objectArray.length].parameterInputType === "number") {
+                    if (database.bufferArray.length < (database.dataStructureArray.length - 1)) {
+                        if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "number") {
                             getById("input").type = "number";
                             getById("input").addEventListener("keyup", listenForQuit);
                         }
                         let editMessage = ", <br> or else, leave blank.";
-                        userPrompt("Edit " + parameters[objectArray.length].parameterToDisplay + editMessage);
-                    } else if (objectArray.length === (parameters.length - 1)) {
+                        userPrompt("Edit " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + editMessage);
+                    } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
                         getById("input").removeEventListener("keyup", listenForQuit);
                         getById("input").disabled = true;
-                        objectArray.push(input);
+                        database.bufferArray.push(input);
                         userPrompt("Entry complete.");
 
                         function applyEdits() {
                             let editedObjectId = parseInt(getById("searchResultID").innerHTML);
                             let comparisonArray = [];
-                            let oldItem = JSON.stringify(database[editedObjectId - 1]);
+                            let oldItem = JSON.stringify(database.databaseArray[editedObjectId - 1]);
                             comparisonArray.push(oldItem);
                             let editingObject = {};
-                            objectArray.forEach(function (item, index) {
+                            database.bufferArray.forEach(function (item, index) {
                                 if (item !== "") {
-                                    if (parameters[index].parameterInputType === "number") {
+                                    if (database.dataStructureArray[index].parameterInputType === "number") {
                                         let objectArrayItem = parseInt(item);
                                         if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
                                             objectArrayItem = 0;
                                         }
-                                        editingObject[parameters[index].parameterName] = item;
+                                        editingObject[database.dataStructureArray[index].parameterName] = item;
                                     } else {
-                                        editingObject[parameters[index].parameterName] = item;
+                                        editingObject[database.dataStructureArray[index].parameterName] = item;
                                     }
                                 }
                             });
                             editingObject.id = editedObjectId;
                             Object.keys(editingObject).forEach(function (item) {
-                                database[editedObjectId - 1][item] = editingObject[item];
+                                database.databaseArray[editedObjectId - 1][item] = editingObject[item];
                             });
-                            let newItem = JSON.stringify(database[editedObjectId - 1]);
+                            let newItem = JSON.stringify(database.databaseArray[editedObjectId - 1]);
                             comparisonArray.push(newItem)
                             comparisonArray.forEach(function (item, index) {
                                 comparisonArray[index] = JSON.parse(comparisonArray[index]);
@@ -440,38 +397,150 @@ document.addEventListener("DOMContentLoaded", function () {
                             displaySearchResults(comparisonArray, "editedItem");
                         }
                         applyEdits();
-                    } else if (objectArray.length > (parameters.length - 1)) {
-                        objectArray = [];
+                    } else if (database.bufferArray.length > (database.dataStructureArray.length - 1)) {
+                        database.bufferArray = [];
                         getById("outputDiv").innerHTML = "";
                         functionLauncher("edit");
                     }
                 }
             }
         }
-    }
+    };
 
     function printDatabase(input) {
         getById("input").disabled = false;
         if (input === "functionLaunched") {
             getById("input").disabled = true;
             functionCurrentlyRunning = "standby";
-            if (database.length === 0) {
+            if (database === undefined) {
                 noDBErrorCatch();
             } else {
-                let dbExportTextArea = document.createElement("TEXTAREA");
-                dbExportTextArea.id = "dbExport";
-                let stringifiedDB = JSON.stringify(database);
-                dbExportTextArea.value = stringifiedDB;
-                getById("outputDiv").appendChild(dbExportTextArea);
-                getById("dbExport").select();
-                document.execCommand("copy");
-                getById("outputDiv").innerHTML = "";
+                printSomething(database);
                 userPrompt("The current database has been copied to clipboard." +
                     "<br>" +
                     "You may now paste it into a text file and save it." +
                     "<br>" +
                     "Press Enter to Continue");
             }
+        }
+    };
+
+    const dbParameterKeys = ["parameterName", "parameterToDisplay",
+        "parameterNotes", "parameterInputType"
+    ];
+    let newDatabaseParameterArray = [];
+    let databaseCreationArray = [];
+
+    function newDB(input) {
+        console.log("database creation array: ");
+        console.log(databaseCreationArray);
+        console.log("new database parameter array: ");
+        console.log(newDatabaseParameterArray);
+        getById("input").removeEventListener("keyup", listenForQuit);
+        getById("input").type = "input";
+        getById("input").disabled = false;
+
+        function buildParameterObject(parameterObjectArray) {
+            let parameterObject = {
+                parameterName: parameterObjectArray[0],
+                parameterToDisplay: parameterObjectArray[1],
+                parameterNotes: parameterObjectArray[2],
+                parameterInputType: parameterObjectArray[3],
+            }
+            databaseCreationArray.push(parameterObject);
+        }
+
+        function buildDatabase(inputArray) {
+            let newDatabase = {
+                name: inputArray[0],
+                comments: inputArray[1],
+                contactInfo: inputArray[2],
+                dataStructureArray: [],
+                databaseArray: [],
+                bufferArray: [],
+            };
+
+            function buildDataStructureArray() {
+                let i;
+                for (i = 3; i < databaseCreationArray.length; i += 1) {
+                    newDatabase.dataStructureArray.push(databaseCreationArray[i]);
+                }
+            }
+            buildDataStructureArray();
+            function addIdParameter() {
+                let idParameter = {
+                    parameterName: "id",
+                    parameterToDisplay: "ID",
+                    parameterNotes: "",
+                    parameterInputType: "number"  
+                }
+                newDatabase.dataStructureArray.push(idParameter);
+            }
+            addIdParameter();
+            let currentDate = new Date().toISOString();
+            newDatabase.dateCreated = currentDate;
+            console.log(newDatabase);
+            let stringifiedNewDB = JSON.stringify(newDatabase);
+            let parsedNewDB = JSON.parse(stringifiedNewDB);
+            database = parsedNewDB;
+            console.log(database);
+        }
+
+        if (database === undefined) {
+            console.log("TRUE");
+            if (databaseCreationArray.length === 0) {
+                if (input === "functionLaunched") {
+                    userPrompt("Name Of Database: ");
+                } else if (input !== "functionLaunched") {
+                    databaseCreationArray.push(input);
+                    userPrompt("Add a comment about this database:");
+                }
+            } else if (databaseCreationArray.length === 1) {
+                userPrompt("Add your contact info:");
+                databaseCreationArray.push(input);
+            } else if (databaseCreationArray.length === 2) {
+                databaseCreationArray.push(input);
+                newDB("beginAddingParameters");
+            } else if (databaseCreationArray.length > 2) {
+                if (input !== "beginAddingParameters") {
+                    newDatabaseParameterArray.push(input);
+                }
+                if (newDatabaseParameterArray.length < dbParameterKeys.length) {
+                    userPrompt("Add " + dbParameterKeys[newDatabaseParameterArray.length]);
+                } else if (newDatabaseParameterArray.length === dbParameterKeys.length) {
+                    userPrompt(
+                        "Entry complete." + "<br>" +
+                        "Type 'done' and hit Enter to finish." + "<br>" +
+                        "Type anything else and hit Enter to add another parameter."
+                    );
+                    buildParameterObject(newDatabaseParameterArray);
+                } else if (newDatabaseParameterArray.length > dbParameterKeys.length) {
+                    newDatabaseParameterArray = [];
+                    if (input.toLowerCase() === "done") {
+                        buildDatabase(databaseCreationArray);
+                        getById("input").disabled = true;
+                        userPrompt(
+                            "Database has been created." + "<br>" +
+                            "Press enter to return to menu." + "<br>" +
+                            "You may begin entering items, or export for later use."
+                        );
+                        functionCurrentlyRunning = "standby";
+                    } else {
+                        userPrompt("Add " + dbParameterKeys[newDatabaseParameterArray.length]);
+                        getById("outputDiv").innerHTML = "";
+                    }
+                }
+            }
+        } else if (database.databaseArray.length > 0) {
+            getById("input").disabled = true;
+            userPrompt("You are already working with a database." +
+                "<br>" +
+                "If you would like to switch to another database," +
+                "<br>" +
+                "Save current database, reload page, and run import." +
+                "<br>" +
+                "Press Enter to Continue");
+            functionCurrentlyRunning = "standby";
         }
     }
 
@@ -483,46 +552,50 @@ document.addEventListener("DOMContentLoaded", function () {
         function convertObjectArrayToObject() {
             let object = {};
             let i;
-            for (i = 0; i < objectArray.length - 1; i += 1) {
-                if (parameters[i].parameterInputType === "number") {
-                    let objectArrayItem = parseInt(objectArray[i]);
+            for (i = 0; i < database.bufferArray.length - 1; i += 1) {
+                if (database.dataStructureArray[i].parameterInputType === "number") {
+                    let objectArrayItem = parseInt(database.bufferArray[i]);
                     if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
                         objectArrayItem = 0
                     }
-                    object[parameters[i].parameterName] = objectArrayItem;
+                    object[database.dataStructureArray[i].parameterName] = objectArrayItem;
                 } else {
-                    object[parameters[i].parameterName] = objectArray[i];
+                    object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 }
             }
-            database.push(object);
-            database[database.length - 1].id = database.length;
+            database.databaseArray.push(object);
+            database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
             displaySearchResults([object], "add");
         }
-        if (input !== "functionLaunched") {
-            objectArray.push(input);
-        }
-        if (objectArray.length < parameters.length) {
-            userPrompt("Add " + parameters[objectArray.length].parameterToDisplay + ":" + "<br>" + parameters[objectArray.length].parameterNotes);
-            if (parameters[objectArray.length].parameterName === "quantity") {
-                getById("input").type = "number";
-                getById("input").value = "0";
-                getById("input").select();
-                getById("input").addEventListener("keyup", listenForQuit);
-                getById("input").min = "0";
+        if (database === undefined) {
+            noDBErrorCatch();
+        } else {
+            if (input !== "functionLaunched") {
+                database.bufferArray.push(input);
             }
-            if (parameters[objectArray.length].parameterName === "id") {
+            if (database.bufferArray.length < database.dataStructureArray.length) {
+                userPrompt("Add " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + ":" + "<br>" + database.dataStructureArray[database.bufferArray.length].parameterNotes);
+                if (database.dataStructureArray[database.bufferArray.length].parameterName === "quantity") {
+                    getById("input").type = "number";
+                    getById("input").value = "0";
+                    getById("input").select();
+                    getById("input").addEventListener("keyup", listenForQuit);
+                    getById("input").min = "0";
+                }
+                if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
+                    getById("input").disabled = true;
+                    userPrompt("ID Automatically added.");
+                }
+            } else if (database.bufferArray.length === database.dataStructureArray.length) {
                 getById("input").disabled = true;
-                userPrompt("ID Automatically added.");
+                database.bufferArray.push(input);
+                userPrompt("Entry complete.");
+                convertObjectArrayToObject();
+            } else if (database.bufferArray.length > database.dataStructureArray.length) {
+                database.bufferArray = [];
+                getById("outputDiv").innerHTML = "";
+                functionLauncher("add");
             }
-        } else if (objectArray.length === parameters.length) {
-            getById("input").disabled = true;
-            objectArray.push(input);
-            userPrompt("Entry complete.");
-            convertObjectArrayToObject();
-        } else if (objectArray.length > parameters.length) {
-            objectArray = [];
-            getById("outputDiv").innerHTML = "";
-            functionLauncher("add");
         }
     };
     // CORE COMMAND FUNCTIONS END
@@ -544,6 +617,8 @@ document.addEventListener("DOMContentLoaded", function () {
             importDB("functionLaunched");
         } else if (input === "commands") {
             printCommands();
+        } else if (input === "new") {
+            newDB("functionLaunched");
         }
     };
 
@@ -558,6 +633,8 @@ document.addEventListener("DOMContentLoaded", function () {
             edit(input);
         } else if (functionCurrentlyRunning === "import") {
             importDB(input);
+        } else if (functionCurrentlyRunning === "new") {
+            newDB(input);
         }
     };
     // CORE FUNCTION MANAGEMENT END
@@ -569,13 +646,13 @@ document.addEventListener("DOMContentLoaded", function () {
         let functionIsRunning = (functionCurrentlyRunning !== "standby");
 
         function undoLogic() {
-            objectArray.pop();
+            database.bufferArray.pop();
             functionLauncher(functionCurrentlyRunning);
         }
 
         function quitLogic() {
             getById("input").value = "";
-            objectArray = [];
+            database.bufferArray = [];
             functionCurrentlyRunning = "standby";
             getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
@@ -601,18 +678,47 @@ document.addEventListener("DOMContentLoaded", function () {
                 functionLauncher(input);
             } else {
                 userPrompt("Please enter a function name to begin");
+                printCommands();
             }
         }
     };
+    // BUG REPORT FUNCTIONS
+    function keylogger(input, maxKeylogArrayLength) {
+        if (maxKeylogArrayLength !== "addOneMore") {
+            maxKeylogArrayLength = 50;
+        } else if (maxKeylogArrayLength === "addOneMore") {
+            maxKeylogArrayLength = (maxKeylogArrayLength + 1)
+        }
+        keylogArray.push(input);
+        if (keylogArray.length > maxKeylogArrayLength) {
+            keylogArray.shift();
+        }
+    }
+
+    function createBugReport() {
+        keylogger("click", "add");
+        printSomething(keylogArray);
+
+        function bugReportAlertUser() {
+            getById("bugReportUserAlert").classList.remove("black");
+            getById("bugReportUserAlert").classList.add("black");
+            setTimeout(function () {
+                getById("bugReportUserAlert").classList.remove("black");
+            }, 5000);
+        }
+        bugReportAlertUser();
+    }
     // MAIN EVENT LISTENER
     function enterLogic() {
         if (event.key === "Enter") {
             let input = getById("input").value;
+            keylogger(input);
             coreInputLogic(input);
             getById("input").focus();
         }
     }
     document.addEventListener("keyup", enterLogic);
+    getById("bugReportButton").addEventListener("click", createBugReport);
     printCommands();
 });
 
@@ -620,7 +726,6 @@ document.addEventListener("DOMContentLoaded", function () {
 /* 
 Things to add:
 - Add new-database function (will take a while)
-- Place data structure (parameters) inside database. 
 
 - Parameters I would like:
     - Title

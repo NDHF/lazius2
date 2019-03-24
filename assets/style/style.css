@@ -27,6 +27,31 @@ header {
     margin-top: 100px;
 }
 
+div#bugReportDiv {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 15px;
+}
+
+div#bugReportDiv p {
+    color: white;
+}
+
+@-webkit-keyframes blackWhite {  
+    0% { color: black; }
+    80% { color: black; }
+    81% { color: white;}
+    100% { color: white; }
+  }
+
+div#bugReportDiv p.black {
+color: black;
+  -webkit-animation-name: blackWhite;
+  -webkit-animation-duration: 5s; 
+  color: white;
+}
+
 div#inputContainer {
     text-align: center;
     width: 50%;
