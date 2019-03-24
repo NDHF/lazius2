@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let database;
     let functionCurrentlyRunning = "standby";
     const arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
-        "param", "print", "commands"
+        "param", "print", "commands", "delete"
     ];
     const dbParameterKeys = [{
             parameterName: "parameterName",
@@ -342,14 +342,14 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             {
                 explanation: "Import an existing inventory: ",
-                name: "Import"
+                name: "import"
             },
             {
                 explanation: "Show list of inventory parameters: ",
                 name: "param"
             },
             {
-                explanation: "Print inventory To clipboard: ",
+                explanation: "Print inventory to clipboard: ",
                 name: "print"
             },
             {
@@ -559,8 +559,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }
                 }
-                if (dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues.length > 0) {
-                    showValidInputs(dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues);
+                if (dbParameterKeys[newDatabaseParameterArray.length] !== undefined) {
+                    if (dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues.length > 0) {
+                        showValidInputs(dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues);
+                    }
                 }
                 if (newDatabaseParameterArray.length < dbParameterKeys.length) {
                     userPrompt(
@@ -609,6 +611,32 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function deleteDB(input) {
+        if (input === "functionLaunched") {
+            userPrompt(
+                "You are about to delete your inventory." + "<br>" +
+                "Please consider making a backup." + "<br>" +
+                "Press Y to continue, press N to cancel"
+            );
+        } else if (input !== "functionLaunched") {
+            if ((input.toLowerCase() !== "y") && (input.toLowerCase() !== "n")) {
+                getById("input").value = "";
+            } else {
+                if (input.toLowerCase() === "n") {
+                    functionCurrentlyRunning = "standby";
+                    userPrompt("Please enter a function name");
+                } else if (input.toLowerCase() === "y") {
+                    database = undefined;
+                    functionCurrentlyRunning = "standby";
+                    userPrompt(
+                        "The inventory has been deleted." + "<br>" +
+                        "Please enter a function name."
+                    );
+                }
+            }
+        }
+    }
+
     function add(input) {
         getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").type = "input";
@@ -628,6 +656,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 }
             }
+            function seeIfItAlreadyExists(object) {
+                console.log("nothing yet.")
+            }
+            seeIfItAlreadyExists(object);
             database.databaseArray.push(object);
             database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
             displaySearchResults([object], "add");
@@ -648,6 +680,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     getById("input").min = "0";
                 }
                 if (database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteValues.length > 0) {
+                    getById("outputDiv").innerHTML = "";
                     showValidInputs(database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteValues);
                 }
                 if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
@@ -687,6 +720,8 @@ document.addEventListener("DOMContentLoaded", function () {
             printCommands();
         } else if (input === "new") {
             newDB("functionLaunched");
+        } else if (input === "delete") {
+            deleteDB("functionLaunched");
         }
     };
 
@@ -703,6 +738,8 @@ document.addEventListener("DOMContentLoaded", function () {
             importDB(input);
         } else if (functionCurrentlyRunning === "new") {
             newDB(input);
+        } else if (functionCurrentlyRunning === "delete") {
+            deleteDB(input);
         }
     };
     // CORE FUNCTION MANAGEMENT END
