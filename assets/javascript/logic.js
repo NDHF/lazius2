@@ -1,6 +1,6 @@
 console.log(
     "LAZIUS" + "\n" +
-    "VERSION 2.0" + "\n" +
+    "VERSION 2.1" + "\n" +
     "BY NICHOLAS BERNHARD" + "\n" + "\u00A9 2019"
 );
 
@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     ];
 
-    //TO CHECK FOR EMPTY AUTO-COMPLETE, LOOK FOR THIS: []
     let newDatabaseParameterArray = [];
     let parameterAutoCompleteValues = [];
     let databaseCreationArray = [];
