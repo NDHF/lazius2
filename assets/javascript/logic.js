@@ -12,6 +12,47 @@ document.addEventListener("DOMContentLoaded", function () {
     const arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
         "param", "print", "commands"
     ];
+    const dbParameterKeys = [{
+            parameterName: "parameterName",
+            parameterToDisplay: "Parameter Name",
+            parameterNotes: "Be sure to use camel case, likeThis",
+            parameterAutoCompleteValues: [],
+            parameterInputType: "input"
+        },
+        {
+            parameterName: "parameterToDisplay",
+            parameterToDisplay: "Parameter To Display",
+            parameterNotes: "This is what the user will see",
+            parameterAutoCompleteValues: [],
+            parameterInputType: "input"
+        },
+        {
+            parameterName: "parameterNotes",
+            parameterToDisplay: "Parameter Notes",
+            parameterNotes: "Include any information the user will need",
+            parameterAutoCompleteValues: [],
+            parameterInputType: "input"
+        },
+        {
+            parameterName: "parameterAutoCompleteValues",
+            parameterToDisplay: "Parameter Auto-Complete Values",
+            parameterNotes: "Make a list of valid inputs",
+            parameterAutoCompleteValues: [],
+            parameterInputType: "input"
+        },
+        {
+            parameterName: "parameterInputType",
+            parameterToDisplay: "Parameter Input Type",
+            parameterNotes: "An input can be a text string (letters and numbers), or just a number",
+            parameterAutoCompleteValues: ["input", "number"],
+            parameterInputType: "input"
+        }
+    ];
+
+    //TO CHECK FOR EMPTY AUTO-COMPLETE, LOOK FOR THIS: []
+    let newDatabaseParameterArray = [];
+    let parameterAutoCompleteValues = [];
+    let databaseCreationArray = [];
 
     let keylogArray = [];
 
@@ -72,6 +113,22 @@ document.addEventListener("DOMContentLoaded", function () {
             "Press Enter to Continue");
         functionCurrentlyRunning = "standby";
     };
+
+    function showValidInputs(autoCompleteArray) {
+        let h3 = document.createElement("H3");
+        let h3Text = document.createTextNode("Please use one of the following inputs:");
+        h3.appendChild(h3Text);
+        getById("outputDiv").appendChild(h3);
+        let ul = document.createElement("UL");
+        ul.classList.add("inlineList");
+        autoCompleteArray.forEach(function (item) {
+            let li = document.createElement("LI");
+            let liNode = document.createTextNode(item);
+            li.appendChild(liNode);
+            ul.appendChild(li);
+        });
+        getById("outputDiv").appendChild(ul);
+    }
 
     function displaySearchResults(searchResultsArray, parentFunction) {
         let resultsHeader = document.createElement("H2");
@@ -147,6 +204,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             searchResultsTable.appendChild(searchResultsTR);
         });
+        getById("outputDiv").innerHTML = "";
         getById("outputDiv").appendChild(searchResultsTable);
     }
     // END
@@ -195,7 +253,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
                         if (typeof databaseItem[searchObjectItem] === "string") {
-                            console.log(true);
                             let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
                             let soItemLowerCase = searchObject[searchObjectItem].toLowerCase();
                             if (dbItemLowerCase.includes(soItemLowerCase)) {
@@ -425,27 +482,15 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    const dbParameterKeys = ["parameterName", "parameterToDisplay",
-        "parameterNotes", "parameterInputType"
-    ];
-    let newDatabaseParameterArray = [];
-    let databaseCreationArray = [];
-
     function newDB(input) {
-        console.log("database creation array: ");
-        console.log(databaseCreationArray);
-        console.log("new database parameter array: ");
-        console.log(newDatabaseParameterArray);
-        getById("input").removeEventListener("keyup", listenForQuit);
-        getById("input").type = "input";
-        getById("input").disabled = false;
 
         function buildParameterObject(parameterObjectArray) {
             let parameterObject = {
                 parameterName: parameterObjectArray[0],
                 parameterToDisplay: parameterObjectArray[1],
                 parameterNotes: parameterObjectArray[2],
-                parameterInputType: parameterObjectArray[3],
+                parameterAutoCompleteValues: parameterObjectArray[3],
+                parameterInputType: parameterObjectArray[4]
             }
             databaseCreationArray.push(parameterObject);
         }
@@ -467,27 +512,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             }
             buildDataStructureArray();
+
             function addIdParameter() {
                 let idParameter = {
                     parameterName: "id",
                     parameterToDisplay: "ID",
                     parameterNotes: "",
-                    parameterInputType: "number"  
+                    parameterAutoCompleteValues: [],
+                    parameterInputType: "number"
                 }
                 newDatabase.dataStructureArray.push(idParameter);
             }
             addIdParameter();
             let currentDate = new Date().toISOString();
             newDatabase.dateCreated = currentDate;
-            console.log(newDatabase);
             let stringifiedNewDB = JSON.stringify(newDatabase);
             let parsedNewDB = JSON.parse(stringifiedNewDB);
             database = parsedNewDB;
-            console.log(database);
         }
 
         if (database === undefined) {
-            console.log("TRUE");
             if (databaseCreationArray.length === 0) {
                 if (input === "functionLaunched") {
                     userPrompt("Name Of Database: ");
@@ -505,15 +549,33 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (input !== "beginAddingParameters") {
                     newDatabaseParameterArray.push(input);
                 }
+                if (dbParameterKeys[newDatabaseParameterArray.length - 1] !== undefined) {
+                    if (dbParameterKeys[newDatabaseParameterArray.length - 1].parameterName === "parameterAutoCompleteValues") {
+                        newDatabaseParameterArray.pop();
+                        if (input !== "") {
+                            parameterAutoCompleteValues.push(input);
+                        } else {
+                            newDatabaseParameterArray.push(parameterAutoCompleteValues);
+                            parameterAutoCompleteValues = [];
+                        }
+                    }
+                }
+                if (dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues.length > 0) {
+                    showValidInputs(dbParameterKeys[newDatabaseParameterArray.length].parameterAutoCompleteValues);
+                }
                 if (newDatabaseParameterArray.length < dbParameterKeys.length) {
-                    userPrompt("Add " + dbParameterKeys[newDatabaseParameterArray.length]);
+                    userPrompt(
+                        "Add " + dbParameterKeys[newDatabaseParameterArray.length].parameterToDisplay +
+                        "<br>" +
+                        dbParameterKeys[newDatabaseParameterArray.length].parameterNotes
+                    );
                 } else if (newDatabaseParameterArray.length === dbParameterKeys.length) {
+                    buildParameterObject(newDatabaseParameterArray);
                     userPrompt(
                         "Entry complete." + "<br>" +
                         "Type 'done' and hit Enter to finish." + "<br>" +
                         "Type anything else and hit Enter to add another parameter."
                     );
-                    buildParameterObject(newDatabaseParameterArray);
                 } else if (newDatabaseParameterArray.length > dbParameterKeys.length) {
                     newDatabaseParameterArray = [];
                     if (input.toLowerCase() === "done") {
@@ -526,12 +588,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         );
                         functionCurrentlyRunning = "standby";
                     } else {
-                        userPrompt("Add " + dbParameterKeys[newDatabaseParameterArray.length]);
+                        userPrompt(
+                            "Add " + dbParameterKeys[newDatabaseParameterArray.length].parameterToDisplay +
+                            "<br>" +
+                            dbParameterKeys[newDatabaseParameterArray.length].parameterNotes
+                        );
                         getById("outputDiv").innerHTML = "";
                     }
                 }
             }
-        } else if (database.databaseArray.length > 0) {
+        } else if (database !== undefined) {
             getById("input").disabled = true;
             userPrompt("You are already working with a database." +
                 "<br>" +
@@ -581,6 +647,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     getById("input").select();
                     getById("input").addEventListener("keyup", listenForQuit);
                     getById("input").min = "0";
+                }
+                if (database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteValues.length > 0) {
+                    showValidInputs(database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteValues);
                 }
                 if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
                     getById("input").disabled = true;
@@ -657,7 +726,6 @@ document.addEventListener("DOMContentLoaded", function () {
             getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
             userPrompt("Please enter a function name to begin");
-            printCommands();
         }
         if (functionIsRunning) {
             let inputIsUndo = (input === "undo");
@@ -677,6 +745,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 functionCurrentlyRunning = input;
                 functionLauncher(input);
             } else {
+                getById("outputDiv").innerHTML = "";
                 userPrompt("Please enter a function name to begin");
                 printCommands();
             }
@@ -721,24 +790,3 @@ document.addEventListener("DOMContentLoaded", function () {
     getById("bugReportButton").addEventListener("click", createBugReport);
     printCommands();
 });
-
-
-/* 
-Things to add:
-- Add new-database function (will take a while)
-
-- Parameters I would like:
-    - Title
-    - Author, Last Name
-    - Author, First Name
-    - Category
-    - Media Type
-        - Book
-        - Audiobook, CD
-        - Audiobook, Cassette
-    - Read
-        - Yes
-        - No
-    - Location
-
-*/
