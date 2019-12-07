@@ -408,7 +408,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function edit(input) {
 
-        if (database.databaseArray.length === 0) {
+        if ((database === undefined) || (database.databaseArray.length === 0)) {
             noDBErrorCatch();
         } else {
             // getById("input").removeEventListener("keyup", listenForQuit);
