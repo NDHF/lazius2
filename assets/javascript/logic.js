@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", function () {
     // GLOBAL VARIABLES START
     let database;
     let functionCurrentlyRunning = "standby";
-    const arrayOfFunctionNames = ["add", "edit", "new", "search", "import",
-        "param", "print", "commands", "delete"
+    const arrayOfFunctionNames = ["add", "edit", "search", "import",
+        "param", "print", "commands", "delete", "newdb", "editdb"
     ];
     const dbParameterKeys = [{
             parameterName: "parameterName",
@@ -63,7 +63,6 @@ document.addEventListener("DOMContentLoaded", function () {
     ];
 
     let newDatabaseParameterArray = [];
-    // let priorValuesArray = [];
     let databaseCreationArray = [];
 
     let keylogArray = [];
@@ -119,29 +118,12 @@ document.addEventListener("DOMContentLoaded", function () {
     function noDBErrorCatch() {
         getById("input").disabled = true;
         userPrompt("Error: No database exists, " + "<br>" +
-            "Or there are no items in the database." + "<br>" +
+            "or there are no items in the database." + "<br>" +
             "A database must exist before printing to clipboard" +
             "<br>" +
             "Press Enter to Continue");
         functionCurrentlyRunning = "standby";
     };
-
-    // function showValidInputs(autoCompleteArray) {
-    //     getById("outputDiv").innerHTML = "";
-    //     let h3 = document.createElement("H3");
-    //     let h3Text = document.createTextNode("Please use one of the following inputs:");
-    //     h3.appendChild(h3Text);
-    //     getById("outputDiv").appendChild(h3);
-    //     let ul = document.createElement("UL");
-    //     ul.classList.add("inlineList");
-    //     autoCompleteArray.forEach(function (item) {
-    //         let li = document.createElement("LI");
-    //         let liNode = document.createTextNode(item);
-    //         li.appendChild(liNode);
-    //         ul.appendChild(li);
-    //     });
-    //     getById("outputDiv").appendChild(ul);
-    // }
 
     function displaySearchResults(searchResultsArray, parentFunction) {
         let resultsHeader = document.createElement("H2");
@@ -157,7 +139,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     searchResultsArray.length + " results.");
             }
         } else if (parentFunction === "add") {
-            numberOfResults = "The following title was added to your database: ";
+            numberOfResults = "The following title was " +
+                "added to your database: ";
         } else if (parentFunction === "edit") {
             numberOfResults = "Item Currently Being Edited";
         } else if (parentFunction === "editedItem") {
@@ -288,18 +271,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 let searchObject = {};
                 objectArray.forEach(function (item, index) {
                     if (item !== "") {
-                        // if (database.dataStructureArray[index].parameterInputType === "number") {
-                        //     searchObject[database.dataStructureArray[index].parameterName] = parseInt(item);
-                        // } else {
-                        //     searchObject[database.dataStructureArray[index].parameterName] = item;
-                        // }
-                        // if (database.dataStructureArray[index].parameterName === "id") {
                         if (database.dataStructureArray[index].parameterInputType === "number") {
                             searchObject[database.dataStructureArray[index].parameterName] = parseFloat(item);
                         } else {
                             searchObject[database.dataStructureArray[index].parameterName] = item;
                         }
-                        // searchObject[database.dataStructureArray[index].parameterName] = item;
                     }
                 });
                 searchFunction(searchObject);
@@ -313,12 +289,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.bufferArray.push(input);
             }
             if (database.bufferArray.length < database.dataStructureArray.length) {
-                // if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "number") {
-                //     getById("input").type = "number";
-                //     getById("input").select();
-                //     // getById("input").addEventListener("keyup", listenForQuit);
-                // }
-                userPrompt(database.dataStructureArray[database.bufferArray.length].parameterToDisplay + " to search for:");
+                userPrompt(database.dataStructureArray[database.bufferArray.length].parameterToDisplay +
+                    " to search for:");
             } else if (database.bufferArray.length === database.dataStructureArray.length) {
                 getById("input").disabled = true;
                 userPrompt("See search results below");
@@ -332,19 +304,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function showParameters() {
-        functionCurrentlyRunning = "standby";
-        let parameterUL = document.createElement("UL");
-        parameterUL.classList.add("inlineList");
-        database.dataStructureArray.forEach(function (parameter) {
-            let parameterLI = document.createElement("LI");
-            let parameterText = document.createTextNode(parameter.parameterToDisplay);
-            parameterLI.appendChild(parameterText);
-            parameterUL.appendChild(parameterLI);
-        });
-        getById("outputDiv").appendChild(parameterUL);
-        userPrompt("Below are the parameters for the " +
-            "current data structure." + "<br>" +
-            "Please enter a function name to begin.");
+        if (database === undefined) {
+            noDBErrorCatch();
+        } else {
+            functionCurrentlyRunning = "standby";
+            let parameterUL = document.createElement("UL");
+            parameterUL.classList.add("inlineList");
+            database.dataStructureArray.forEach(function (parameter) {
+                let parameterLI = document.createElement("LI");
+                let parameterText = document.createTextNode(parameter.parameterToDisplay);
+                parameterLI.appendChild(parameterText);
+                parameterUL.appendChild(parameterLI);
+            });
+            getById("outputDiv").appendChild(parameterUL);
+            userPrompt("Below are the parameters for the " +
+                "current data structure." + "<br>" +
+                "Please enter a function name to begin.");
+        }
     }
 
     function printCommands() {
@@ -363,11 +339,15 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             {
                 explanation: "Create a new database: ",
-                name: "new"
+                name: "newdb"
             },
             {
                 explanation: "Import an existing inventory: ",
                 name: "import"
+            },
+            {
+                explanation: "Edit an inventory's parameters",
+                name: "editdb"
             },
             {
                 explanation: "Show list of inventory parameters: ",
@@ -433,12 +413,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         database.bufferArray.push(input);
                     }
                     if (database.bufferArray.length < (database.dataStructureArray.length - 1)) {
-                        // if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "number") {
-                        //     getById("input").type = "number";
-                        //     // getById("input").addEventListener("keyup", listenForQuit);
-                        // }
                         let editMessage = ", <br> or else, leave blank.";
-                        userPrompt("Edit " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + editMessage);
+                        userPrompt("Edit " +
+                            database.dataStructureArray[database.bufferArray.length].parameterToDisplay +
+                            editMessage);
                     } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
                         getById("input").removeEventListener("keyup", listenForQuit);
@@ -463,7 +441,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                     } else {
                                         editingObject[database.dataStructureArray[index].parameterName] = item;
                                     }
-                                    // editingObject[database.dataStructureArray[index].parameterName] = item;
                                 }
                             });
                             editingObject.id = editedObjectId;
@@ -507,134 +484,25 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    function newDB(input) {
+    function closeDBEditingPage() {
+        document.addEventListener("keyup", enterLogic);
+        getById("dbEditingPage").classList.remove("dbEditingActive");
+        getById("dbEditingPage").classList.add("dbEditingStandby");
+        getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
+        printCommands(); 
+    }
 
-        function buildParameterObject(parameterObjectArray) {
-            let parameterObject = {
-                parameterName: parameterObjectArray[0],
-                parameterToDisplay: parameterObjectArray[1],
-                parameterNotes: parameterObjectArray[2],
-                // priorValuesArray: parameterObjectArray[3],
-                // parameterInputType: parameterObjectArray[3]
-            }
-            databaseCreationArray.push(parameterObject);
-        }
-
-        function buildDatabase(inputArray) {
-            let newDatabase = {
-                name: inputArray[0],
-                comments: inputArray[1],
-                contactInfo: inputArray[2],
-                dataStructureArray: [],
-                databaseArray: [],
-                bufferArray: [],
-            };
-
-            function buildDataStructureArray() {
-                let i;
-                for (i = 3; i < databaseCreationArray.length; i += 1) {
-                    newDatabase.dataStructureArray.push(databaseCreationArray[i]);
-                }
-            }
-            buildDataStructureArray();
-
-            function addIdParameter() {
-                let idParameter = {
-                    parameterName: "id",
-                    parameterToDisplay: "ID",
-                    parameterNotes: "",
-                    // priorValuesArray: [],
-                    // parameterInputType: "number"
-                }
-                newDatabase.dataStructureArray.push(idParameter);
-            }
-            addIdParameter();
-            let currentDate = new Date().toISOString();
-            newDatabase.dateCreated = currentDate;
-            let stringifiedNewDB = JSON.stringify(newDatabase);
-            let parsedNewDB = JSON.parse(stringifiedNewDB);
-            database = parsedNewDB;
-        }
-
-        if (database === undefined) {
-            if (databaseCreationArray.length === 0) {
-                if (input === "functionLaunched") {
-                    userPrompt("Name Of Database: ");
-                } else if (input !== "functionLaunched") {
-                    databaseCreationArray.push(input);
-                    userPrompt("Add a comment about this database:");
-                }
-            } else if (databaseCreationArray.length === 1) {
-                userPrompt("Add your contact info:");
-                databaseCreationArray.push(input);
-            } else if (databaseCreationArray.length === 2) {
-                databaseCreationArray.push(input);
-                newDB("beginAddingParameters");
-            } else if (databaseCreationArray.length > 2) {
-                if (input !== "beginAddingParameters") {
-                    newDatabaseParameterArray.push(input);
-                }
-                // if (dbParameterKeys[newDatabaseParameterArray.length - 1] !== undefined) {
-                //     if (dbParameterKeys[newDatabaseParameterArray.length - 1].parameterName === "priorValuesArray") {
-                //         newDatabaseParameterArray.pop();
-                //         if (input !== "") {
-                //             priorValuesArray.push(input);
-                //         } else {
-                //             newDatabaseParameterArray.push(priorValuesArray);
-                //             priorValuesArray = [];
-                //         }
-                //     }
-                // }
-                // if (dbParameterKeys[newDatabaseParameterArray.length] !== undefined) {
-                //     if (dbParameterKeys[newDatabaseParameterArray.length].priorValuesArray.length > 0) {
-                //         showValidInputs(dbParameterKeys[newDatabaseParameterArray.length].priorValuesArray);
-                //     }
-                // }
-                if (newDatabaseParameterArray.length < dbParameterKeys.length) {
-                    userPrompt(
-                        "Add " + dbParameterKeys[newDatabaseParameterArray.length].parameterToDisplay +
-                        "<br>" +
-                        dbParameterKeys[newDatabaseParameterArray.length].parameterNotes
-                    );
-                } else if (newDatabaseParameterArray.length === dbParameterKeys.length) {
-                    buildParameterObject(newDatabaseParameterArray);
-                    getById("outputDiv").innerHTML = "";
-                    userPrompt(
-                        "Entry complete." + "<br>" +
-                        "Type 'done' and hit Enter to finish." + "<br>" +
-                        "Type anything else and hit Enter to add another parameter."
-                    );
-                } else if (newDatabaseParameterArray.length > dbParameterKeys.length) {
-                    newDatabaseParameterArray = [];
-                    if (input.toLowerCase() === "done") {
-                        buildDatabase(databaseCreationArray);
-                        getById("input").disabled = true;
-                        userPrompt(
-                            "Database has been created." + "<br>" +
-                            "Press enter to return to menu." + "<br>" +
-                            "You may begin entering items, or export for later use."
-                        );
-                        functionCurrentlyRunning = "standby";
-                    } else {
-                        userPrompt(
-                            "Add " + dbParameterKeys[newDatabaseParameterArray.length].parameterToDisplay +
-                            "<br>" +
-                            dbParameterKeys[newDatabaseParameterArray.length].parameterNotes
-                        );
-                        getById("outputDiv").innerHTML = "";
-                    }
-                }
-            }
-        } else if (database !== undefined) {
-            getById("input").disabled = true;
-            userPrompt("You are already working with a database." +
-                "<br>" +
-                "If you would like to switch to another database," +
-                "<br>" +
-                "Save current database, reload page, and run import." +
-                "<br>" +
-                "Press Enter to Continue");
-            functionCurrentlyRunning = "standby";
+    function databaseEditingLogic(input) {
+        console.log(input);
+        document.removeEventListener("keyup", enterLogic);
+        getById("dbEditingPage").classList.remove("dbEditingStandby");
+        getById("dbEditingPage").classList.add("dbEditingActive");
+        getById("dbEditingCloseDiv").addEventListener("click", closeDBEditingPage);
+        
+        if (input === "newdb") {
+            getById("dbEditingPageHeader").innerHTML = "CREATE A NEW DATABASE";
+        } else if (input === "editdb") {
+            getById("dbEditingPageHeader").innerHTML = "DATABASE EDITOR";
         }
     }
 
@@ -673,18 +541,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let object = {};
             let i;
             for (i = 0; i < database.bufferArray.length - 1; i += 1) {
-                // if (database.dataStructureArray[i].parameterInputType === "number") {
-                //     let objectArrayItem = parseInt(database.bufferArray[i]);
-                //     if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
-                //         objectArrayItem = 0
-                //     }
-                //     object[database.dataStructureArray[i].parameterName] = objectArrayItem;
-                // } else {
-                //     object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
-                // }
-                // if (database.dataStructureArray[i].parameterName === "id") {
                 if (database.dataStructureArray[i].parameterInputType === "number") {
-                    console.log("THIS SHOULD BE A NUMBER");
                     let objectArrayItem = parseFloat(database.bufferArray[i]);
                     if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
                         objectArrayItem = 0;
@@ -694,11 +551,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 }
             }
-            console.log(object);
-            function seeIfItAlreadyExists(object) {
-                console.log("nothing yet.")
-            }
-            seeIfItAlreadyExists(object);
+            // function seeIfItAlreadyExists(object) {
+            //     console.log("nothing yet.")
+            // }
+            // seeIfItAlreadyExists(object);
             database.databaseArray.push(object);
             database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
             displaySearchResults([object], "add");
@@ -710,29 +566,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.bufferArray.push(input);
             }
             if (database.bufferArray.length < database.dataStructureArray.length) {
-                userPrompt("Add " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + ":" + "<br>" + database.dataStructureArray[database.bufferArray.length].parameterNotes);
-                // if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "number") {
-                //     console.log("I'm a number!");
-                //     getById("input").type = "number";
-                //     getById("input").value = "0";
-                //     getById("input").select();
-                //     // getById("input").addEventListener("keyup", listenForQuit);
-                //     getById("input").min = "0";
-                // }
-                // if (database.dataStructureArray[database.bufferArray.length].priorValuesArray.length > 0) {
-                //     getById("outputDiv").innerHTML = "";
-                //     showValidInputs(database.dataStructureArray[database.bufferArray.length].priorValuesArray);
-                // }
-                // if (database.dataStructureArray[database.bufferArray.length].showPriorValues === "false") {
-                //     if (database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteSubCat === "false") {
-                //         database.dataStructureArray[database.bufferArray.length].priorValuesArray.push(input);
-                //     } else if (database.dataStructureArray[database.bufferArray.length].parameterAutoCompleteSubCat === "true") {
-                //         if (database.dataStructureArray[database.bufferArray.length].priorValuesArray[database.bufferArray.length] === undefined) {
-                //             database.dataStructureArray[database.bufferArray.length].priorValuesArray[database.bufferArray.length] = [];
-                //         } 
-                //         database.dataStructureArray[database.bufferArray.length].priorValuesArray[database.bufferArray.length].push(input);
-                //     }
-                // }
+                let paramToDisplay = database.dataStructureArray[database.bufferArray.length].parameterToDisplay;
+                let paramNotes = database.dataStructureArray[database.bufferArray.length].parameterNotes;
+                userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
                 if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
                     getById("input").disabled = true;
                     getById("input").value = "";
@@ -769,10 +605,10 @@ document.addEventListener("DOMContentLoaded", function () {
             importDB("functionLaunched");
         } else if (input === "commands") {
             printCommands();
-        } else if (input === "new") {
-            newDB("functionLaunched");
         } else if (input === "delete") {
             deleteDB("functionLaunched");
+        } else if ((input === "newdb") || (input === "editdb")) {
+            databaseEditingLogic(input);
         }
     };
 
@@ -787,8 +623,6 @@ document.addEventListener("DOMContentLoaded", function () {
             edit(input);
         } else if (functionCurrentlyRunning === "import") {
             importDB(input);
-        } else if (functionCurrentlyRunning === "new") {
-            newDB(input);
         } else if (functionCurrentlyRunning === "delete") {
             deleteDB(input);
         }
@@ -872,9 +706,6 @@ document.addEventListener("DOMContentLoaded", function () {
     // MAIN EVENT LISTENER
     function enterLogic() {
         if (event.key === "Enter") {
-            if (database !== undefined) {
-                console.log(database.bufferArray);
-            }
             let input = getById("input").value;
             keylogger(input);
             coreInputLogic(input);

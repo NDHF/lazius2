@@ -38,6 +38,35 @@ div#bugReportDiv p {
     color: white;
 }
 
+div.dbEditingStandby {
+    width: 0px;
+    height: 0px;
+    visibility: collapse;
+}
+
+div#dbEditingRelativeContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+div#dbEditingCloseDiv {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10%;
+    font-size: xx-large;
+}
+
+div.dbEditingActive {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: lightblue;
+}
+
 @-webkit-keyframes blackWhite {  
     0% { color: black; }
     80% { color: black; }
