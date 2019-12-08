@@ -255,7 +255,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function search(input) {
         getById("input").type = "input";
-        // getById("input").removeEventListener("keyup", listenForQuit);
+        getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").disabled = false;
 
         function searchFunctionChain(objectArray) {
@@ -293,8 +293,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         // } else {
                         //     searchObject[database.dataStructureArray[index].parameterName] = item;
                         // }
-                        if (database.dataStructureArray[index].parameterName === "id") {
-                            searchObject[database.dataStructureArray[index].parameterName] = parseInt(item);
+                        // if (database.dataStructureArray[index].parameterName === "id") {
+                        if (database.dataStructureArray[index].parameterInputType === "number") {
+                            searchObject[database.dataStructureArray[index].parameterName] = parseFloat(item);
                         } else {
                             searchObject[database.dataStructureArray[index].parameterName] = item;
                         }
@@ -411,17 +412,17 @@ document.addEventListener("DOMContentLoaded", function () {
         if ((database === undefined) || (database.databaseArray.length === 0)) {
             noDBErrorCatch();
         } else {
-            // getById("input").removeEventListener("keyup", listenForQuit);
+            getById("input").removeEventListener("keyup", listenForQuit);
             if (input === "functionLaunched") {
                 getById("input").type = "number";
-                // getById("input").addEventListener("keyup", listenForQuit);
+                getById("input").addEventListener("keyup", listenForQuit);
                 userPrompt("Enter ID of item you wish to edit");
             } else {
                 if ((getById("input").type === "number") && (database.bufferArray.length === 0)) {
                     if (input === "") {
                         functionLauncher("edit");
                     } else {
-                        // getById("input").removeEventListener("keyup", listenForQuit);
+                        getById("input").removeEventListener("keyup", listenForQuit);
                         let idInput = parseInt(input);
                         getById("input").type = "input";
                         displaySearchResults([database.databaseArray[idInput - 1]], "edit");
@@ -440,7 +441,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         userPrompt("Edit " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + editMessage);
                     } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
-                        // getById("input").removeEventListener("keyup", listenForQuit);
+                        getById("input").removeEventListener("keyup", listenForQuit);
                         getById("input").disabled = true;
                         database.bufferArray.push(input);
                         userPrompt("Entry complete.");
@@ -453,16 +454,16 @@ document.addEventListener("DOMContentLoaded", function () {
                             let editingObject = {};
                             database.bufferArray.forEach(function (item, index) {
                                 if (item !== "") {
-                                    // if (database.dataStructureArray[index].parameterInputType === "number") {
-                                    //     let objectArrayItem = parseInt(item);
-                                    //     if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
-                                    //         objectArrayItem = 0;
-                                    //     }
-                                    //     editingObject[database.dataStructureArray[index].parameterName] = item;
-                                    // } else {
-                                    //     editingObject[database.dataStructureArray[index].parameterName] = item;
-                                    // }
-                                    editingObject[database.dataStructureArray[index].parameterName] = item;
+                                    if (database.dataStructureArray[index].parameterInputType === "number") {
+                                        let objectArrayItem = parseFloat(item);
+                                        if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
+                                            objectArrayItem = 0;
+                                        }
+                                        editingObject[database.dataStructureArray[index].parameterName] = objectArrayItem;
+                                    } else {
+                                        editingObject[database.dataStructureArray[index].parameterName] = item;
+                                    }
+                                    // editingObject[database.dataStructureArray[index].parameterName] = item;
                                 }
                             });
                             editingObject.id = editedObjectId;
@@ -664,7 +665,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function add(input) {
-        // getById("input").removeEventListener("keyup", listenForQuit);
+        getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").type = "input";
         getById("input").disabled = false;
 
@@ -681,15 +682,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 // } else {
                 //     object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 // }
-                if (database.dataStructureArray[i].parameterName === "id") {
-                    let objectArrayItem = parseInt(database.bufferArray[i]);
+                // if (database.dataStructureArray[i].parameterName === "id") {
+                if (database.dataStructureArray[i].parameterInputType === "number") {
+                    console.log("THIS SHOULD BE A NUMBER");
+                    let objectArrayItem = parseFloat(database.bufferArray[i]);
                     if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
                         objectArrayItem = 0;
                     }
                     object[database.dataStructureArray[i].parameterName] = objectArrayItem;
+                } else {
+                    object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 }
-                object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
             }
+            console.log(object);
             function seeIfItAlreadyExists(object) {
                 console.log("nothing yet.")
             }
@@ -810,7 +815,7 @@ document.addEventListener("DOMContentLoaded", function () {
             getById("outputDiv").innerHTML = "";
             database.bufferArray = [];
             functionCurrentlyRunning = "standby";
-            // getById("input").removeEventListener("keyup", listenForQuit);
+            getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
             userPrompt("Please enter a function name to begin");
         }
@@ -868,7 +873,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function enterLogic() {
         if (event.key === "Enter") {
             if (database !== undefined) {
-                console.log(database.databaseArray);
+                console.log(database.bufferArray);
             }
             let input = getById("input").value;
             keylogger(input);
