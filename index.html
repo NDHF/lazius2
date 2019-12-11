@@ -1,4 +1,4 @@
-in<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -11,11 +11,7 @@ in<!DOCTYPE html>
 
 <body>
 
-        <header>
-                <h1 class="center">Lazius 2</h1>
-        </header>
-
-    <div id="container">
+    <div id="container" class="active">
 
         <div id="inputContainer">
             <p id="userPrompt">Please enter a function name to begin</p>
@@ -24,15 +20,69 @@ in<!DOCTYPE html>
         <div id="outputDiv"></div>
     </div>
 
-    <div id="dbEditingPage" class="dbEditingStandby">
+    <div id="dbEditingPage" class="standby">
         <div id="dbEditingRelativeContainer">
             <div id="dbEditingCloseDiv">X</div>
-            <h1 id="dbEditingPageHeader"></h1>
-            <div id="divEditingContainer"></div>
+            <h1 id="dbEditingPageHeader" class="center"></h1>
+            <div id="primaryDBInfo">
+                <div>
+                    <span>DATABASE NAME:</span><input type="input" />
+                </div>
+                <div>
+                    <span>DATABASE COMMENTS:</span><input type="input" />
+                </div>
+                <div>
+                    <span>CONTACT INFO:</span><input type="input" />
+                </div>
+            </div>
+            <div id="dbEditingFooter">
+                <button type="button" id="addNewParamButton" class="dbEditingButton">ADD NEW</button>
+            </div>
+            <div id="dbEditingContainer">
+
+                <div class="dbParameterDiv">
+                    <h3 class="center">ADD NEW PARAMETER</h3>
+                    <div>
+                        <span>Parameter Name:</span><input type="input" />
+                        <p>Be sure to use camel-case, likeThis (no spaces)</p>
+                    </div>
+                    <div>
+                        <span>Parameter to Display:</span><input type="input" />
+                        <p>This is what the user will see</p>
+                    </div>
+                    <div>
+                        <span>Parameter Notes:</span><input type="input" />
+                        <p>Include any information the user will need.</p>
+                    </div>
+                    <div>
+                        <span>Parameter Input Type:</span>
+                        <select>
+                            <option value="input">STRING</option>
+                            <option value="number">NUMBER</option>
+                        </select>
+                        <p>The input can be a <em>string</em> (letters and numbers) or just a <em>number</em>.</p>
+                        <p>Numbers are recommended for parameters like 'price' and 'quantity'</p>
+                    </div>
+                    <div>
+                        <span>Show Prior Values:</span>
+                        <select>
+                            <option value="no">NO</option>
+                            <option value="yes">YES</option>
+                        </select>
+                        <p>This will display all prior values given for the parameter.</p>
+                        <p>You should choose 'YES' only for parameters that share
+                            a few common values, such as <em>'Category'</em>.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div id="dbEditingFooter">
+                <button type="button" id="submitButton" class="dbEditingButton">SAVE PARAMETERS</button>
+            </div>
         </div>
     </div>
 
-    <div id ="bugReportDiv">
+    <div id="bugReportDiv">
         <p id="bugReportUserAlert">Bug report copied to clipboard.</p>
         <button type="button" id="bugReportButton">CREATE BUG REPORT</button>
     </div>

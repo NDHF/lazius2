@@ -9,62 +9,12 @@ document.addEventListener("DOMContentLoaded", function () {
     // GLOBAL VARIABLES START
     let database;
     let functionCurrentlyRunning = "standby";
-    const arrayOfFunctionNames = ["add", "edit", "search", "import",
-        "param", "print", "commands", "delete", "newdb", "editdb"
-    ];
-    const dbParameterKeys = [{
-            parameterName: "parameterName",
-            parameterToDisplay: "Parameter Name",
-            parameterNotes: "Be sure to use camel case, likeThis",
-            // showPriorValues: true,
-            // priorValuesArray: [],
-            // parameterInputType: "input"
-        },
-        {
-            parameterName: "parameterToDisplay",
-            parameterToDisplay: "Parameter To Display",
-            parameterNotes: "This is what the user will see",
-            // showPriorValues: true,
-            // priorValuesArray: [],
-            // parameterInputType: "input"
-        },
-        {
-            parameterName: "parameterNotes",
-            parameterToDisplay: "Parameter Notes",
-            parameterNotes: "Include any information the user will need",
-            // showPriorValues: true,
-            // priorValuesArray: [],
-            // parameterInputType: "input"
-        },
-        // {
-        //     parameterName: "priorValuesArray",
-        //     parameterToDisplay: "Parameter Auto-Complete Values",
-        //     parameterNotes: "Make a list of valid inputs",
-        //     // showPriorValues: true,
-        //     // priorValuesArray: [],
-        //     // parameterInputType: "input"
-        // },
-        // {
-        //     parameterName: "showPriorValues",
-        //     parameterToDisplay: "Would you like to see prior values for this parameter?",
-        //     parameterNotes: "If true, user can add to an object's autocomplete list.",
-        //     // showPriorValues: true,
-        //     // priorValuesArray: ["true", "false"],
-        //     // parameterInputType: "input"
-        // },
-        // {
-        //     parameterName: "parameterInputType",
-        //     parameterToDisplay: "Parameter Input Type",
-        //     parameterNotes: "An input can be a text string (letters and numbers), or just a number",
-        //     // showPriorValues: true,
-        //     // priorValuesArray: ["input", "number"],
-        //     // parameterInputType: "input"
-        // }
+    const arrayOfFunctionNames = [
+        "add", "edit", "search", "import", "param", 
+        "print", "commands", "delete", "newdb", "editdb"
     ];
 
     let newDatabaseParameterArray = [];
-    let databaseCreationArray = [];
-
     let keylogArray = [];
 
     // GLOBAL VARIABLES END
@@ -231,6 +181,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 getById("outputDiv").innerHTML = "";
                 database = parsedTextArea;
                 userPrompt("Database imported. Press 'Enter' to continue.");
+                localStorage.setItem("db", JSON.stringify(database));
                 functionCurrentlyRunning = "standby";
             }
         }
@@ -484,20 +435,73 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    function closeDBEditingPage() {
-        document.addEventListener("keyup", enterLogic);
-        getById("dbEditingPage").classList.remove("dbEditingActive");
-        getById("dbEditingPage").classList.add("dbEditingStandby");
-        getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
-        printCommands(); 
+    function databaseEditingLiaison(input) {
+        if (database !== undefined) {
+            let warningMessage = "WARNING: placeholder " +
+            "Press YES to continue, press NO to cancel.";
+            function createWarningPopUp() {
+                let warningPopUp = confirm(warningMessage);
+                if (warningPopUp === true) {
+                    databaseEditingLogic(input);
+                } else if (warningPopUp === false) {
+                    functionCurrentlyRunning = "standby";
+                    printCommands();
+                }
+            }
+            if (input === "newdb") {
+                warningMessage = warningMessage.replace("placeholder",
+                    "You are already working with an existing inventory. " +
+                    "Creating a new database will delete the old one. "
+                );
+                createWarningPopUp();
+            } else if (input === "editdb") {
+                warningMessage = warningMessage.replace("placeholder",
+                    "You are about to edit your inventory's parameters. " +
+                    "This may change the performance of your inventory. "
+                );
+                createWarningPopUp();
+            }
+        } else if (database === undefined) {
+            if (input === "newdb") {
+                databaseEditingLogic(input);
+            } else if (input === "editdb") {
+                noDBErrorCatch();
+            }
+        } 
     }
 
     function databaseEditingLogic(input) {
         console.log(input);
         document.removeEventListener("keyup", enterLogic);
-        getById("dbEditingPage").classList.remove("dbEditingStandby");
-        getById("dbEditingPage").classList.add("dbEditingActive");
+        getById("container").classList.remove("active");
+        getById("container").classList.add("standby");
+        getById("dbEditingPage").classList.remove("standby");
+        getById("dbEditingPage").classList.add("active");
         getById("dbEditingCloseDiv").addEventListener("click", closeDBEditingPage);
+
+        let dbParameterDiv = document.getElementsByClassName("dbParameterDiv")[0];
+        let dbEditingContainer = getById("dbEditingContainer");
+
+        function closeDBEditingPage() {
+            getById("addNewParamButton").removeEventListener("click", addNewParameterDiv);
+            document.addEventListener("keyup", enterLogic);
+            getById("dbEditingPage").classList.remove("active");
+            getById("dbEditingPage").classList.add("standby");
+            getById("container").classList.remove("standby");
+            getById("container").classList.add("active");
+            getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
+            printCommands(); 
+            getById("input").select();
+        }
+
+        function addNewParameterDiv() {
+            let dbParameterDivClone = dbParameterDiv.cloneNode(true);
+            console.log("CLICKED!");
+            dbEditingContainer.appendChild(dbParameterDivClone);
+            console.log(document.getElementsByClassName("dbParameterDiv"));
+        }
+
+        getById("addNewParamButton").addEventListener("click", addNewParameterDiv);
         
         if (input === "newdb") {
             getById("dbEditingPageHeader").innerHTML = "CREATE A NEW DATABASE";
@@ -608,7 +612,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (input === "delete") {
             deleteDB("functionLaunched");
         } else if ((input === "newdb") || (input === "editdb")) {
-            databaseEditingLogic(input);
+            databaseEditingLiaison(input);
         }
     };
 

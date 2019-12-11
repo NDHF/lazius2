@@ -1,9 +1,6 @@
 /* STYLING FOR LAZIUS 2 */
 
 div#container {
-    position: fixed;
-    top: 0;
-    left: 0;
     height: 100%;
     width: 100%;
     padding-top: 15%;
@@ -38,16 +35,102 @@ div#bugReportDiv p {
     color: white;
 }
 
-div.dbEditingStandby {
+div.standby {
     width: 0px;
     height: 0px;
-    visibility: collapse;
+    display: none;
+}
+
+div.active {
+    display: block;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 div#dbEditingRelativeContainer {
-    width: 100%;
-    height: 100%;
     position: relative;
+}
+
+.center {
+    text-align: center;
+}
+
+div#primaryDBInfo {
+    display: block;
+    width: 33%;
+    margin-left: 33%;
+    margin-right: 33%;
+    margin-bottom: 2.5%;
+}
+
+div#primaryDBInfo span {
+    display: block;
+    float: left;
+    text-align: right;
+    width: 49%;
+}
+
+div#primaryDBInfo input {
+    text-align: left;
+    width: 49%;
+}
+
+button.dbEditingButton {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div#dbEditingContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: left;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.dbParameterDiv {
+    width: 40%;
+    margin-left: 2%;
+    margin-right: 2%;
+    padding-left: 0.5%;
+    padding-right: 0.5%;
+    margin-bottom: 2.5%;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    border: outset;
+    border-radius: 15px;
+}
+
+div.dbParameterDiv span {
+    display: block;
+    float: left;
+    width: 32%;
+}
+
+div.dbParameterDiv input {
+    width: 66%;
+}
+
+div.dbParameterDiv select {
+    width: 66%;
+}
+
+div.dbParameterDiv div {
+    padding-top: 2.5%;
+}
+
+div.dbParameterDiv div:not(:last-child) {
+    border-bottom: 1px solid black;
+}
+
+div.dbParameterDiv p {
+    font-weight: bold;
 }
 
 div#dbEditingCloseDiv {
@@ -56,15 +139,6 @@ div#dbEditingCloseDiv {
     right: 0;
     width: 10%;
     font-size: xx-large;
-}
-
-div.dbEditingActive {
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    top: 0;
-    left: 0;
-    background-color: lightblue;
 }
 
 @-webkit-keyframes blackWhite {  
