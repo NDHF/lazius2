@@ -192,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
         getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").disabled = false;
 
-        function searchFunctionChain(objectArray) {
+        function searchFunctionChain() {
             function searchFunction(searchObject) {
                 let searchResultsArray = [];
                 let arrayOfSearchObjectKeys = Object.keys(searchObject);
@@ -435,6 +435,67 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
+    function createDatabase() {
+        function checkForRequiredInputs() {
+            let databaseNameInput = getById("databaseNameInput").value;
+            let paramNameInputs = Array.from(document.getElementsByClassName("parameterNameInput"));
+            let paramToDisplayInputs = Array.from(document.getElementsByClassName("parameterToDisplayInput"));
+            let requiredInputArray = [databaseNameInput].concat(paramNameInputs, paramToDisplayInputs);
+            let missingInputCounter = 0;
+            function inputArrayItemCheck(item, index) {
+                if (index === 0) {
+                    if (item.trim() === "") {
+                        missingInputCounter += 1;
+                    }
+                } else if (index > 0) {
+                    if (item.value.trim() === "") {
+                        missingInputCounter += 1;
+                    }
+                }
+            } 
+            requiredInputArray.forEach(inputArrayItemCheck);
+            if (missingInputCounter > 0) {
+                let inputMissingMessage = "YOU ARE MISSING REQUIRED INPUTS. " + 
+                "PLEASE MAKE SURE ALL REQUIRED FIELDS ARE FILLED OUT;"
+                alert(inputMissingMessage);
+            } else {
+                populateDatabaseObject();
+            }
+        }
+        function populateDatabaseObject() {
+            let databaseObject = {
+                name: getById("databaseNameInput").value,
+                comments: getById("databaseCommentsInput").value,
+                contactInfo: getById("databaseContactInfoInput").value,
+                dataStructureArray: [],
+                databaseArray: [],
+                bufferArray: [],
+                dateCreated: new Date().toISOString()
+            }
+            let parametersArray = Array.from(document.getElementsByClassName("dbParameterDiv"));
+            function addToDataStructureArray(parameterDiv) {
+                let dataStructureArrayObject = {
+                    parameterName: parameterDiv.children[1].children[1].value,
+                    parameterToDisplay: parameterDiv.children[2].children[1].value,
+                    parameterNotes: parameterDiv.children[3].children[1].value
+                };
+
+                let inputTypeOption = parameterDiv.children[4].children[1];
+                let selectedInputType = parameterDiv.children[4].children[1][inputTypeOption.selectedIndex].value;
+                dataStructureArrayObject.parameterInputType = selectedInputType;
+
+                let showPriorValuesOption = parameterDiv.children[5].children[1];
+                let showPriorValuesSelectedOption = parameterDiv.children[5].children[1][showPriorValuesOption.selectedIndex].value;
+                dataStructureArrayObject.parameterAutoComplete = showPriorValuesSelectedOption;
+
+                databaseObject.dataStructureArray.push(dataStructureArrayObject);
+            }
+            parametersArray.forEach(addToDataStructureArray);
+            console.log(databaseObject);
+        }
+        checkForRequiredInputs();
+    }
+
     function databaseEditingLiaison(input) {
         if (database !== undefined) {
             let warningMessage = "WARNING: placeholder " +
@@ -478,6 +539,7 @@ document.addEventListener("DOMContentLoaded", function () {
         getById("dbEditingPage").classList.remove("standby");
         getById("dbEditingPage").classList.add("active");
         getById("dbEditingCloseDiv").addEventListener("click", closeDBEditingPage);
+        getById("saveParametersButton").addEventListener("click", createDatabase);
 
         let dbParameterDiv = document.getElementsByClassName("dbParameterDiv")[0];
         let dbEditingContainer = getById("dbEditingContainer");
@@ -496,9 +558,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function addNewParameterDiv() {
             let dbParameterDivClone = dbParameterDiv.cloneNode(true);
-            console.log("CLICKED!");
+            dbParameterDivClone.children[1].children[1].value = "";
+            dbParameterDivClone.children[2].children[1].value = "";
+            dbParameterDivClone.children[3].children[1].value = "";
+            dbParameterDivClone.children[4].children[1].selectedIndex = 0;
+            dbParameterDivClone.children[5].children[1].selectedIndex = 0;
             dbEditingContainer.appendChild(dbParameterDivClone);
-            console.log(document.getElementsByClassName("dbParameterDiv"));
         }
 
         getById("addNewParamButton").addEventListener("click", addNewParameterDiv);

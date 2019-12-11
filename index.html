@@ -26,13 +26,13 @@
             <h1 id="dbEditingPageHeader" class="center"></h1>
             <div id="primaryDBInfo">
                 <div>
-                    <span>DATABASE NAME:</span><input type="input" />
+                    <span>DATABASE NAME:</span><input id="databaseNameInput" type="input" required />
                 </div>
                 <div>
-                    <span>DATABASE COMMENTS:</span><input type="input" />
+                    <span>DATABASE COMMENTS:</span><input id="databaseCommentsInput" type="input" />
                 </div>
                 <div>
-                    <span>CONTACT INFO:</span><input type="input" />
+                    <span>CONTACT INFO:</span><input id="databaseContactInfoInput" type="input" />
                 </div>
             </div>
             <div id="dbEditingFooter">
@@ -43,15 +43,15 @@
                 <div class="dbParameterDiv">
                     <h3 class="center">ADD NEW PARAMETER</h3>
                     <div>
-                        <span>Parameter Name:</span><input type="input" />
+                        <span>Parameter Name:</span><input class="parameterNameInput" type="input" required />
                         <p>Be sure to use camel-case, likeThis (no spaces)</p>
                     </div>
                     <div>
-                        <span>Parameter to Display:</span><input type="input" />
+                        <span>Parameter to Display:</span><input class="parameterToDisplayInput" type="input" required />
                         <p>This is what the user will see</p>
                     </div>
                     <div>
-                        <span>Parameter Notes:</span><input type="input" />
+                        <span>Parameter Notes:</span><input class="parameterNotesInput" type="input" />
                         <p>Include any information the user will need.</p>
                     </div>
                     <div>
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div id="dbEditingFooter">
-                <button type="button" id="submitButton" class="dbEditingButton">SAVE PARAMETERS</button>
+                <button type="button" id="saveParametersButton" class="dbEditingButton">SAVE PARAMETERS</button>
             </div>
         </div>
     </div>
