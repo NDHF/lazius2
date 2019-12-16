@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let database;
     let functionCurrentlyRunning = "standby";
     const arrayOfFunctionNames = [
-        "add", "edit", "search", "import", "param", 
+        "add",   "edit", "search", "import", "param", 
         "print", "commands", "delete", "newdb", "editdb"
     ];
 
@@ -491,7 +491,19 @@ document.addEventListener("DOMContentLoaded", function () {
                 databaseObject.dataStructureArray.push(dataStructureArrayObject);
             }
             parametersArray.forEach(addToDataStructureArray);
-            console.log(databaseObject);
+            function addIDObject() {
+                let idObject = {
+                    parameterName: "id",
+                    parameterToDisplay: "ID",
+                    parameterNotes: "",
+                    parameterInputType: "number",
+                    parameterAutoComplete: "no"
+                }
+                databaseObject.dataStructureArray.push(idObject);
+            }
+            addIDObject();
+            database = databaseObject;
+            console.log(database);
         }
         checkForRequiredInputs();
     }
@@ -638,6 +650,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 let paramToDisplay = database.dataStructureArray[database.bufferArray.length].parameterToDisplay;
                 let paramNotes = database.dataStructureArray[database.bufferArray.length].parameterNotes;
                 userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
+                if (database.dataStructureArray[database.bufferArray.length].parameterAutoComplete === "yes") {
+                    function findPastAutocompleteValues(paramName) {
+                        console.log("nothing yet");
+                    }
+                    findPastAutocompleteValues(database.dataStructureArray[database.bufferArray.length].parameterName);
+                }
                 if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
                     getById("input").disabled = true;
                     getById("input").value = "";

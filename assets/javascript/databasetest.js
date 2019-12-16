@@ -1,113 +1,48 @@
 {
-    "name": "Library",
-    "comments": "My Book Collection",
-    "contactInfo": "NicholasatNDHFilmsdotcom",
+    "name": "Test",
+    "comments": "Test",
+    "contactInfo": "",
     "dataStructureArray": [{
         "parameterName": "title",
         "parameterToDisplay": "Title",
-        "parameterNotes": "Place definite articles (the, a) at end, preceded by a comma",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "input"
-    }, {
-        "parameterName": "authorLastName",
-        "parameterToDisplay": "Author, Last Name",
         "parameterNotes": "",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "input"
-    }, {
-        "parameterName": "authorFirstName",
-        "parameterToDisplay": "Author, First Name",
-        "parameterNotes": "Place middle initials after first name",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "input"
+        "parameterInputType": "input",
+        "parameterAutoComplete": "no"
     }, {
         "parameterName": "category",
         "parameterToDisplay": "Category",
         "parameterNotes": "",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "input"
-    }, {
-        "parameterName": "subCategory",
-        "parameterToDisplay": "Sub-Category",
-        "parameterNotes": "",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "input"
-    }, {
-        "parameterName": "location",
-        "parameterToDisplay": "Location",
-        "parameterNotes": "",
-        "parameterAutoCompleteValues": ["Main Bookshelf", "Rare Books"],
-        "parameterInputType": "input"
-    }, {
-        "parameterName": "readStatus",
-        "parameterToDisplay": "Read Status",
-        "parameterNotes": "",
-        "parameterAutoCompleteValues": ["Y", "N", "In-Progress"],
-        "parameterInputType": "input"
+        "parameterInputType": "input",
+        "parameterAutoComplete": "yes"
     }, {
         "parameterName": "quantity",
         "parameterToDisplay": "Quantity",
         "parameterNotes": "",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "number"
+        "parameterInputType": "number",
+        "parameterAutoComplete": "no"
     }, {
         "parameterName": "id",
         "parameterToDisplay": "ID",
         "parameterNotes": "",
-        "parameterAutoCompleteValues": [],
-        "parameterInputType": "number"
+        "parameterInputType": "number",
+        "parameterAutoComplete": "no"
     }],
     "databaseArray": [{
-        "title": "Uncle Tom's Cabin",
-        "authorLastName": "Stowe",
-        "authorFirstName": "Harriet Beecher",
+        "title": "Little Women",
         "category": "Fiction",
-        "subCategory": "Classics",
-        "location": "Main",
-        "readStatus": "N",
-        "quantity": 1,
+        "quantity": 2,
         "id": 1
     }, {
-        "title": "Bonfire of the Vanities",
-        "authorLastName": "Wolfe",
-        "authorFirstName": "Tom",
+        "title": "American Psycho",
         "category": "Fiction",
-        "subCategory": "Postmodern",
-        "location": "Main",
-        "readStatus": "N",
         "quantity": 1,
         "id": 2
     }, {
-        "title": "Past Tense",
-        "authorLastName": "Child",
-        "authorFirstName": "Lee",
-        "category": "Fiction",
-        "subCategory": "Thriller",
-        "location": "Main",
-        "readStatus": "N",
-        "quantity": 2,
-        "id": 3
-    }, {
-        "title": "Chronicles of Narnia, The",
-        "authorLastName": "Lewis",
-        "authorFirstName": "C.S.",
-        "category": "Fiction",
-        "subCategory": "Classics",
-        "location": "Main",
-        "readStatus": "Y",
+        "title": "Significant Figures",
+        "category": "Non-Fiction",
         "quantity": 1,
-        "id": 4
-    }, {
-        "title": "Little Women",
-        "authorLastName": "Alcott",
-        "authorFirstName": "Louisa May",
-        "category": "Fiction",
-        "subCategory": "Classics",
-        "location": "Main",
-        "readStatus": "N",
-        "quantity": 2,
-        "id": 5
+        "id": 3
     }],
     "bufferArray": [],
-    "dateCreated": "2019-03-24T23:02:31.516Z"
+    "dateCreated": "2019-12-16T23:38:34.760Z"
 }
