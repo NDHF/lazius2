@@ -813,6 +813,7 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Bug Report copied to clipboard.");
         }
         bugReportAlertUser();
+        printCommands();
     }
     // MAIN EVENT LISTENER
     function enterLogic() {
