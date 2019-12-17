@@ -567,11 +567,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function databaseEditingLogic(input) {
         console.log(input);
+        let elementIDsToToggle = ["container", "dbEditingPage", "footer"];
+        function toggleElementById(item) {
+            console.log(item);
+            if (getById(item).classList.contains("active")) {
+                getById(item).classList.remove("active");
+                getById(item).classList.add("standby");
+            } else if(getById(item).classList.contains("standby")) {
+                getById(item).classList.remove("standby");
+                getById(item).classList.add("active");
+            }
+        }
+        elementIDsToToggle.forEach(toggleElementById);
         document.removeEventListener("keyup", enterLogic);
-        getById("container").classList.remove("active");
-        getById("container").classList.add("standby");
-        getById("dbEditingPage").classList.remove("standby");
-        getById("dbEditingPage").classList.add("active");
         getById("dbEditingCloseDiv").addEventListener("click", closeDBEditingPage);
         getById("saveParametersButton").addEventListener("click", createDatabase);
 
@@ -581,10 +589,7 @@ document.addEventListener("DOMContentLoaded", function () {
         function closeDBEditingPage() {
             getById("addNewParamButton").removeEventListener("click", addNewParameterDiv);
             document.addEventListener("keyup", enterLogic);
-            getById("dbEditingPage").classList.remove("active");
-            getById("dbEditingPage").classList.add("standby");
-            getById("container").classList.remove("standby");
-            getById("container").classList.add("active");
+            elementIDsToToggle.forEach(toggleElementById);
             getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
             printCommands(); 
             getById("input").select();
@@ -805,11 +810,7 @@ document.addEventListener("DOMContentLoaded", function () {
         printSomething(keylogArray);
 
         function bugReportAlertUser() {
-            getById("bugReportUserAlert").classList.remove("black");
-            getById("bugReportUserAlert").classList.add("black");
-            setTimeout(function () {
-                getById("bugReportUserAlert").classList.remove("black");
-            }, 5000);
+            alert("Bug Report copied to clipboard.");
         }
         bugReportAlertUser();
     }

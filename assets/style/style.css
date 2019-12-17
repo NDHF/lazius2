@@ -3,7 +3,6 @@
 div#container {
     height: 100%;
     width: 100%;
-    padding-top: 15%;
 }
 
 ul.inlineList li {
@@ -21,14 +20,40 @@ td.alignRight {
 }
 
 header {
-    margin-top: 100px;
+    text-align: center;
+}
+
+footer.standby {
+    width: 0px;
+    height: 0px;
+    display: none;
+}
+
+footer.active {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+}
+
+div#footerContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-items: center;
 }
 
 div#bugReportDiv {
-    position: fixed;
-    bottom: 0;
-    right: 0;
-    padding: 15px;
+    order: 1;
+}
+
+div#docsDiv {
+    order: 2;
+}
+
+div#creditsDiv {
+    order: 3;
 }
 
 div#bugReportDiv p {
