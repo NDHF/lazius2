@@ -254,20 +254,24 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function buildListInOutputDiv(arrayOfThingsToPrint, itemKey) {
+        let parameterUL = document.createElement("UL");
+        parameterUL.classList.add("inlineList");
+        arrayOfThingsToPrint.forEach(function (item) {
+            let li = document.createElement("LI");
+            let liText = document.createTextNode(item[itemKey]);
+            li.appendChild(liText);
+            parameterUL.appendChild(li);
+        });
+        getById("outputDiv").appendChild(parameterUL);
+    }
+
     function showParameters() {
         if (database === undefined) {
             noDBErrorCatch();
         } else {
             functionCurrentlyRunning = "standby";
-            let parameterUL = document.createElement("UL");
-            parameterUL.classList.add("inlineList");
-            database.dataStructureArray.forEach(function (parameter) {
-                let parameterLI = document.createElement("LI");
-                let parameterText = document.createTextNode(parameter.parameterToDisplay);
-                parameterLI.appendChild(parameterText);
-                parameterUL.appendChild(parameterLI);
-            });
-            getById("outputDiv").appendChild(parameterUL);
+            buildListInOutputDiv(database.dataStructureArray, "parameterToDisplay");
             userPrompt("Below are the parameters for the " +
                 "current data structure." + "<br>" +
                 "Please enter a function name to begin.");
@@ -652,7 +656,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
                 if (database.dataStructureArray[database.bufferArray.length].parameterAutoComplete === "yes") {
                     function findPastAutocompleteValues(paramName) {
-                        console.log("nothing yet");
+                        console.log(paramName);
+                        let valuesAlreadyDisplayed = [];
+                        function displayPastValues(item, index) {
+                            let itemProperty = item[paramName];
+
+                        }
+                        database.databaseArray.forEach(displayPastValues);
                     }
                     findPastAutocompleteValues(database.dataStructureArray[database.bufferArray.length].parameterName);
                 }
