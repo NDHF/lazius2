@@ -118,16 +118,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 tableCaptionRow.classList.add("center");
                 tableCaptionTD.colSpan = database.dataStructureArray.length;
                 let tableCaptionText;
+                function displayComparisonTableRow(beforeOrAfter) {
+                    tableCaptionText = document.createTextNode(beforeOrAfter);
+                    tableCaptionTD.appendChild(tableCaptionText);
+                    tableCaptionRow.appendChild(tableCaptionTD);
+                    searchResultsTable.appendChild(tableCaptionRow);
+                }
                 if (searchResultIndex === 0) {
-                    tableCaptionText = document.createTextNode("BEFORE:");
-                    tableCaptionTD.appendChild(tableCaptionText);
-                    tableCaptionRow.appendChild(tableCaptionTD);
-                    searchResultsTable.appendChild(tableCaptionRow);
+                    displayComparisonTableRow("BEFORE:");
                 } else if (searchResultIndex === 1) {
-                    tableCaptionText = document.createTextNode("AFTER:");
-                    tableCaptionTD.appendChild(tableCaptionText);
-                    tableCaptionRow.appendChild(tableCaptionTD);
-                    searchResultsTable.appendChild(tableCaptionRow);
+                    displayComparisonTableRow("AFTER:");
                 }
             }
             let searchResultsTR = document.createElement("TR");
