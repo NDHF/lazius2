@@ -25,6 +25,15 @@ section h1 {
     padding-left: 5%; 
 }
 
+section p {
+    text-align: justify;
+    text-justify: inter-word;
+}
+
+section p:first-of-type {
+    text-indent: 25px;
+}
+
 /* DESKTOP */
 
 @media screen and (orientation: landscape) and (min-width: 1201px) {
