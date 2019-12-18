@@ -45,6 +45,23 @@ div#footerContainer {
     padding-bottom: 5px;
 }
 
+div.removeParameterDiv {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    width: 100%;
+    text-align: right;
+}
+
+div.removeParameterDiv span {
+    display: block;
+    float: right;
+    font-size: x-large;
+    font-weight: bolder;
+    margin-right: 10px;
+}
+
 div#dbEditingFooter {
     margin-bottom: 10px;
 }
@@ -164,7 +181,7 @@ div.dbParameterDiv div {
     padding-top: 2.5%;
 }
 
-div.dbParameterDiv div:not(:last-child) {
+div.dbParameterDiv div:not(:first-child):not(:last-child) {
     border-bottom: 1px solid black;
 }
 

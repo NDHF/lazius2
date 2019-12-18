@@ -512,17 +512,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function addToDataStructureArray(parameterDiv) {
                 let dataStructureArrayObject = {
-                    parameterName: parameterDiv.children[1].children[1].value,
-                    parameterToDisplay: parameterDiv.children[2].children[1].value,
-                    parameterNotes: parameterDiv.children[3].children[1].value
+                    parameterName: parameterDiv.children[2].children[1].value,
+                    parameterToDisplay: parameterDiv.children[3].children[1].value,
+                    parameterNotes: parameterDiv.children[4].children[1].value
                 };
 
-                let inputTypeOption = parameterDiv.children[4].children[1];
-                let selectedInputType = parameterDiv.children[4].children[1][inputTypeOption.selectedIndex].value;
+                let inputTypeOption = parameterDiv.children[5].children[1];
+                let selectedInputType = parameterDiv.children[5].children[1][inputTypeOption.selectedIndex].value;
                 dataStructureArrayObject.parameterInputType = selectedInputType;
 
-                let showPriorValuesOption = parameterDiv.children[5].children[1];
-                let showPriorValuesSelectedOption = parameterDiv.children[5].children[1][showPriorValuesOption.selectedIndex].value;
+                let showPriorValuesOption = parameterDiv.children[6].children[1];
+                let showPriorValuesSelectedOption = parameterDiv.children[6].children[1][showPriorValuesOption.selectedIndex].value;
                 dataStructureArrayObject.parameterAutoComplete = showPriorValuesSelectedOption;
 
                 databaseObject.dataStructureArray.push(dataStructureArrayObject);
@@ -621,11 +621,11 @@ document.addEventListener("DOMContentLoaded", function () {
         let dbParameterDiv = document.getElementsByClassName("dbParameterDiv")[0];
         let dbEditingContainer = getById("dbEditingContainer");
         let dbParameterDivClone = dbParameterDiv.cloneNode(true);
-        dbParameterDivClone.children[1].children[1].value = "";
         dbParameterDivClone.children[2].children[1].value = "";
         dbParameterDivClone.children[3].children[1].value = "";
-        dbParameterDivClone.children[4].children[1].selectedIndex = 0;
+        dbParameterDivClone.children[4].children[1].value = "";
         dbParameterDivClone.children[5].children[1].selectedIndex = 0;
+        dbParameterDivClone.children[6].children[1].selectedIndex = 0;
         dbEditingContainer.appendChild(dbParameterDivClone);
     }
 
@@ -654,11 +654,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                     if (notID) {
                         let currentDBParameterDiv = document.getElementsByClassName("dbParameterDiv")[index];
-                        currentDBParameterDiv.children[1].children[1].value = dataStructureItem.parameterName;
-                        currentDBParameterDiv.children[2].children[1].value = dataStructureItem.parameterToDisplay;
-                        currentDBParameterDiv.children[3].children[1].value = dataStructureItem.parameterNotes;
-                        currentDBParameterDiv.children[4].children[1].value = dataStructureItem.parameterInputType;
-                        currentDBParameterDiv.children[5].children[1].value = dataStructureItem.parameterAutoComplete;
+                        currentDBParameterDiv.children[2].children[1].value = dataStructureItem.parameterName;
+                        currentDBParameterDiv.children[3].children[1].value = dataStructureItem.parameterToDisplay;
+                        currentDBParameterDiv.children[4].children[1].value = dataStructureItem.parameterNotes;
+                        currentDBParameterDiv.children[5].children[1].value = dataStructureItem.parameterInputType;
+                        currentDBParameterDiv.children[6].children[1].value = dataStructureItem.parameterAutoComplete;
                     }
                 }
                 database.dataStructureArray.forEach(visualizeStructureArrayItems);

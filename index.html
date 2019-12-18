@@ -47,13 +47,15 @@
             <div id="dbEditingContainer">
 
                 <div class="dbParameterDiv">
+                    <div class="removeParameterDiv"><span onclick="deleteParameterDiv(this)">X</span></div>
                     <h3 class="center">ADD NEW PARAMETER</h3>
                     <div>
                         <span>Parameter Name:</span><input class="parameterNameInput" type="input" required />
                         <p>Be sure to use camel-case, likeThis (no spaces)</p>
                     </div>
                     <div>
-                        <span>Parameter to Display:</span><input class="parameterToDisplayInput" type="input" required />
+                        <span>Parameter to Display:</span><input class="parameterToDisplayInput" type="input"
+                            required />
                         <p>This is what the user will see</p>
                     </div>
                     <div>
@@ -106,7 +108,20 @@
             </div>
         </div>
     </footer>
+    <script>
+        function deleteParameterDiv(targetParameterDiv) {
+            console.log(targetParameterDiv);
+            let paramDivs = document.getElementsByClassName("dbParameterDiv");
+            let paramDivsArray = Array.from(paramDivs);
 
+            if (paramDivsArray.length === 1) {
+                alert("You must have at least one parameter for your inventory," +
+                    "in addition to the automatic ID parameter");
+            } else {
+                targetParameterDiv.parentNode.parentNode.parentNode.removeChild(targetParameterDiv.parentNode.parentNode);
+            }
+        }
+    </script>
     <script src="assets/javascript/logic.js"></script>
 
 </body>
