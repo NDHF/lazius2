@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let database;
     let functionCurrentlyRunning = "standby";
     const arrayOfFunctionNames = [
-        "add",   "edit", "search", "import", "param", 
+        "add", "edit", "search", "import", "param",
         "print", "commands", "delete", "newdb", "editdb"
     ];
 
@@ -118,6 +118,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 tableCaptionRow.classList.add("center");
                 tableCaptionTD.colSpan = database.dataStructureArray.length;
                 let tableCaptionText;
+
                 function displayComparisonTableRow(beforeOrAfter) {
                     tableCaptionText = document.createTextNode(beforeOrAfter);
                     tableCaptionTD.appendChild(tableCaptionText);
@@ -260,6 +261,7 @@ document.addEventListener("DOMContentLoaded", function () {
         parameterUL.classList.add("inlineList");
         arrayOfThingsToPrint.forEach(function (item) {
             let itemProperty = item[itemKey];
+
             function buildLI() {
                 let li = document.createElement("LI");
                 let liText = document.createTextNode(item[itemKey]);
@@ -464,6 +466,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let paramToDisplayInputs = Array.from(document.getElementsByClassName("parameterToDisplayInput"));
             let requiredInputArray = [databaseNameInput].concat(paramNameInputs, paramToDisplayInputs);
             let missingInputCounter = 0;
+
             function inputArrayItemCheck(item, index) {
                 if (index === 0) {
                     if (item.trim() === "") {
@@ -474,16 +477,27 @@ document.addEventListener("DOMContentLoaded", function () {
                         missingInputCounter += 1;
                     }
                 }
-            } 
+            }
             requiredInputArray.forEach(inputArrayItemCheck);
             if (missingInputCounter > 0) {
-                let inputMissingMessage = "YOU ARE MISSING REQUIRED INPUTS. " + 
-                "PLEASE MAKE SURE ALL REQUIRED FIELDS ARE FILLED OUT;"
+                let inputMissingMessage = "YOU ARE MISSING REQUIRED INPUTS. " +
+                    "PLEASE MAKE SURE ALL REQUIRED FIELDS ARE FILLED OUT;"
                 alert(inputMissingMessage);
             } else {
-                populateDatabaseObject();
+                checkBeforePopulating();
             }
         }
+
+        function checkBeforePopulating() {
+            let warningBeforePopulatingDB = "Are you sure you want to " +
+                "save this database?";
+            let finalCheckBeforePopulating = confirm(warningBeforePopulatingDB);
+            if (finalCheckBeforePopulating === true) {
+                populateDatabaseObject();
+            }
+            closeDBEditingPage();
+        }
+
         function populateDatabaseObject() {
             let databaseObject = {
                 name: getById("databaseNameInput").value,
@@ -495,6 +509,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 dateCreated: new Date().toISOString()
             }
             let parametersArray = Array.from(document.getElementsByClassName("dbParameterDiv"));
+
             function addToDataStructureArray(parameterDiv) {
                 let dataStructureArrayObject = {
                     parameterName: parameterDiv.children[1].children[1].value,
@@ -513,6 +528,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 databaseObject.dataStructureArray.push(dataStructureArrayObject);
             }
             parametersArray.forEach(addToDataStructureArray);
+
             function addIDObject() {
                 let idObject = {
                     parameterName: "id",
@@ -524,8 +540,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 databaseObject.dataStructureArray.push(idObject);
             }
             addIDObject();
-            database = databaseObject;
-            console.log(database);
+            if (database === undefined) {
+                database = databaseObject;
+            } else {
+                database.dataStructureArray = databaseObject.dataStructureArray;
+            }
         }
         checkForRequiredInputs();
     }
@@ -533,7 +552,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function databaseEditingLiaison(input) {
         if (database !== undefined) {
             let warningMessage = "WARNING: placeholder " +
-            "Press YES to continue, press NO to cancel.";
+                "Press YES to continue, press NO to cancel.";
+
             function createWarningPopUp() {
                 let warningPopUp = confirm(warningMessage);
                 if (warningPopUp === true) {
@@ -562,55 +582,88 @@ document.addEventListener("DOMContentLoaded", function () {
             } else if (input === "editdb") {
                 noDBErrorCatch();
             }
-        } 
+        }
     }
 
-    function databaseEditingLogic(input) {
-        console.log(input);
+    function toggleLogic() {
         let elementIDsToToggle = ["container", "dbEditingPage", "footer"];
+
         function toggleElementById(item) {
-            console.log(item);
             if (getById(item).classList.contains("active")) {
                 getById(item).classList.remove("active");
                 getById(item).classList.add("standby");
-            } else if(getById(item).classList.contains("standby")) {
+            } else if (getById(item).classList.contains("standby")) {
                 getById(item).classList.remove("standby");
                 getById(item).classList.add("active");
             }
         }
         elementIDsToToggle.forEach(toggleElementById);
+    }
+
+    function closeDBEditingPage() {
+        let dbParamDivs = document.getElementsByClassName("dbParameterDiv");
+        let dbParamDivsArray = Array.from(dbParamDivs);
+        function removeAllButFirstParamDiv(item, index) {
+            if (index > 0) {
+                item.parentNode.removeChild(item);
+            }
+        }
+        dbParamDivsArray.forEach(removeAllButFirstParamDiv);
+        getById("addNewParamButton").removeEventListener("click", addNewParameterDiv);
+        document.addEventListener("keyup", enterLogic);
+        getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
+        toggleLogic();
+        printCommands();
+        getById("input").select();
+    }
+
+    function addNewParameterDiv() {
+        let dbParameterDiv = document.getElementsByClassName("dbParameterDiv")[0];
+        let dbEditingContainer = getById("dbEditingContainer");
+        let dbParameterDivClone = dbParameterDiv.cloneNode(true);
+        dbParameterDivClone.children[1].children[1].value = "";
+        dbParameterDivClone.children[2].children[1].value = "";
+        dbParameterDivClone.children[3].children[1].value = "";
+        dbParameterDivClone.children[4].children[1].selectedIndex = 0;
+        dbParameterDivClone.children[5].children[1].selectedIndex = 0;
+        dbEditingContainer.appendChild(dbParameterDivClone);
+    }
+
+    function databaseEditingLogic(input) {
+        toggleLogic();
         document.removeEventListener("keyup", enterLogic);
         getById("dbEditingCloseDiv").addEventListener("click", closeDBEditingPage);
         getById("saveParametersButton").addEventListener("click", createDatabase);
 
-        let dbParameterDiv = document.getElementsByClassName("dbParameterDiv")[0];
-        let dbEditingContainer = getById("dbEditingContainer");
-
-        function closeDBEditingPage() {
-            getById("addNewParamButton").removeEventListener("click", addNewParameterDiv);
-            document.addEventListener("keyup", enterLogic);
-            elementIDsToToggle.forEach(toggleElementById);
-            getById("dbEditingCloseDiv").removeEventListener("click", closeDBEditingPage);
-            printCommands(); 
-            getById("input").select();
-        }
-
-        function addNewParameterDiv() {
-            let dbParameterDivClone = dbParameterDiv.cloneNode(true);
-            dbParameterDivClone.children[1].children[1].value = "";
-            dbParameterDivClone.children[2].children[1].value = "";
-            dbParameterDivClone.children[3].children[1].value = "";
-            dbParameterDivClone.children[4].children[1].selectedIndex = 0;
-            dbParameterDivClone.children[5].children[1].selectedIndex = 0;
-            dbEditingContainer.appendChild(dbParameterDivClone);
-        }
-
         getById("addNewParamButton").addEventListener("click", addNewParameterDiv);
-        
+
         if (input === "newdb") {
             getById("dbEditingPageHeader").innerHTML = "CREATE A NEW DATABASE";
         } else if (input === "editdb") {
             getById("dbEditingPageHeader").innerHTML = "DATABASE EDITOR";
+
+            function visualizeDataStructureArray() {
+                getById("databaseNameInput").value = database.name;
+                getById("databaseCommentsInput").value = database.comments;
+                getById("databaseContactInfoInput").value = database.contactInfo;
+
+                function visualizeStructureArrayItems(dataStructureItem, index) {
+                    let notID = dataStructureItem.parameterName !== "id"
+                    if ((index > 0) && (notID)) {
+                        addNewParameterDiv();
+                    }
+                    if (notID) {
+                        let currentDBParameterDiv = document.getElementsByClassName("dbParameterDiv")[index];
+                        currentDBParameterDiv.children[1].children[1].value = dataStructureItem.parameterName;
+                        currentDBParameterDiv.children[2].children[1].value = dataStructureItem.parameterToDisplay;
+                        currentDBParameterDiv.children[3].children[1].value = dataStructureItem.parameterNotes;
+                        currentDBParameterDiv.children[4].children[1].value = dataStructureItem.parameterInputType;
+                        currentDBParameterDiv.children[5].children[1].value = dataStructureItem.parameterAutoComplete;
+                    }
+                }
+                database.dataStructureArray.forEach(visualizeStructureArrayItems);
+            }
+            visualizeDataStructureArray();
         }
     }
 
@@ -679,7 +732,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
                 if (database.dataStructureArray[database.bufferArray.length].parameterAutoComplete === "yes") {
                     function findPastAutocompleteValues(paramName) {
-                        console.log(paramName);
                         buildListInOutputDiv(database.databaseArray, paramName);
                     }
                     findPastAutocompleteValues(database.dataStructureArray[database.bufferArray.length].parameterName);

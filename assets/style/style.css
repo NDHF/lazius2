@@ -42,6 +42,11 @@ div#footerContainer {
     flex-wrap: wrap;
     justify-content: space-around;
     align-items: center;
+    padding-bottom: 5px;
+}
+
+div#dbEditingFooter {
+    margin-bottom: 10px;
 }
 
 div#bugReportDiv {
@@ -52,8 +57,12 @@ div#docsDiv {
     order: 2;
 }
 
-div#creditsDiv {
+div#versionDiv {
     order: 3;
+}
+
+div#creditsDiv {
+    order: 4;
 }
 
 div#bugReportDiv p {

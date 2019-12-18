@@ -1,0 +1,34 @@
+/* LAZIUS DOCUMENTATION STYLESHEET */
+
+header {
+    text-align: center;
+}
+
+figure#librarianPainting img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+figure#librarianPainting figcaption {
+    margin-top: 5px;
+    text-align: center;
+}
+
+section {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+section h1 {
+    padding-left: 5%; 
+}
+
+/* DESKTOP */
+
+@media screen and (orientation: landscape) and (min-width: 1201px) {
+    section {
+        width: 66%;
+    }
+}
