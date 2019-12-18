@@ -819,6 +819,7 @@ document.addEventListener("DOMContentLoaded", function () {
             getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
             userPrompt("Please enter a function name to begin");
+            printCommands();
         }
         if (functionIsRunning) {
             let inputIsUndo = (input === "undo");
