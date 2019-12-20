@@ -283,6 +283,8 @@ document.addEventListener("DOMContentLoaded", function () {
             nothingToShowli.appendChild(nothingToShowliText);
             parameterUL.appendChild(nothingToShowli);
         }
+        // CLEAR OUTPUT DIV FIRST
+        getById("outputDiv").innerHTML = "";
         getById("outputDiv").appendChild(parameterUL);
     }
 
@@ -739,6 +741,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
                     getById("input").disabled = true;
                     getById("input").value = "";
+                    getById("outputDiv").innerHTML = "";
                     userPrompt("ID Automatically added.");
                 }
             } else if (database.bufferArray.length === database.dataStructureArray.length) {
