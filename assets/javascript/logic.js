@@ -11,7 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let functionCurrentlyRunning = "standby";
     const arrayOfFunctionNames = [
         "add", "edit", "search", "import", "param",
-        "print", "commands", "delete", "newdb", "editdb"
+        "print", "commands", "delete", "newdb", "editdb",
+        "last"
     ];
 
     let newDatabaseParameterArray = [];
@@ -95,6 +96,8 @@ document.addEventListener("DOMContentLoaded", function () {
             numberOfResults = "Item Currently Being Edited";
         } else if (parentFunction === "editedItem") {
             numberOfResults = "Review Changes Below";
+        } else if (parentFunction === "last") {
+            numberOfResults = "Last entry:";
         }
         let numberOfResultsText = document.createTextNode(numberOfResults);
         resultsHeader.appendChild(numberOfResultsText);
@@ -182,6 +185,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 getById("outputDiv").innerHTML = "";
                 database = parsedTextArea;
                 userPrompt("Database imported. Press 'Enter' to continue.");
+                showLastEntry();
                 localStorage.setItem("db", JSON.stringify(database));
                 functionCurrentlyRunning = "standby";
             }
@@ -341,6 +345,10 @@ document.addEventListener("DOMContentLoaded", function () {
             {
                 explanation: "Quit current function: ",
                 name: "quit"
+            },
+            {
+                explanation: "Show last entry:",
+                name: "last"
             }
         ];
         let commandHeading = document.createElement("H2");
@@ -605,6 +613,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function closeDBEditingPage() {
         let dbParamDivs = document.getElementsByClassName("dbParameterDiv");
         let dbParamDivsArray = Array.from(dbParamDivs);
+
         function removeAllButFirstParamDiv(item, index) {
             if (index > 0) {
                 item.parentNode.removeChild(item);
@@ -756,6 +765,18 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         }
     };
+
+    function showLastEntry() {
+        console.log(functionCurrentlyRunning);
+        if (database === undefined) {
+            noDBErrorCatch();
+        } else if (database.databaseArray.length === 0) {
+            getById("outputDiv").innerHTML = "There are no entries in the database.";
+        } else if (database.databaseArray.length > 0) {
+            displaySearchResults([database.databaseArray[database.databaseArray.length - 1]], "last");
+            functionCurrentlyRunning = "standby"
+        }
+    }
     // CORE COMMAND FUNCTIONS END
 
     // CORE FUNCTION MANAGEMENT START
@@ -779,6 +800,8 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteDB("functionLaunched");
         } else if ((input === "newdb") || (input === "editdb")) {
             databaseEditingLiaison(input);
+        } else if (input === "last") {
+            showLastEntry();
         }
     };
 

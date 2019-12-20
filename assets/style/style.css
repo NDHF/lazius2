@@ -34,6 +34,9 @@ footer.active {
     bottom: 0;
     left: 0;
     width: 100%;
+    background-color: white;
+    border-top: 1px solid lightgray;
+    z-index: 20px;
 }
 
 div#footerContainer {
@@ -251,6 +254,9 @@ div#outputDiv {
     margin-left: auto;
     margin-right: auto;
     margin-top: 20px;
+    margin-bottom: 10%;
+    background-color: white;
+    z-index: 10;
 }
 
 div#outputDiv h2, .center {
