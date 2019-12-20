@@ -5,9 +5,24 @@ div#container {
     width: 100%;
 }
 
+ul.inlineList {
+    display: block;
+    /* width: 66%; */
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    white-space: nowrap;
+}
+
 ul.inlineList li {
     display: inline;
     margin-right: 15px;
+    text-align: center;
+}
+
+ul.inlineList li:not(:first-of-type) {
+    border-left: 1px solid lightgray;
+    padding-left: 10px;
 }
 
 td.highlightRed {
@@ -225,18 +240,29 @@ div#dbEditingCloseDiv {
     font-size: xx-large;
 }
 
-@-webkit-keyframes blackWhite {  
-    0% { color: black; }
-    80% { color: black; }
-    81% { color: white;}
-    100% { color: white; }
-  }
+@-webkit-keyframes blackWhite {
+    0% {
+        color: black;
+    }
+
+    80% {
+        color: black;
+    }
+
+    81% {
+        color: white;
+    }
+
+    100% {
+        color: white;
+    }
+}
 
 div#bugReportDiv p.black {
-color: black;
-  -webkit-animation-name: blackWhite;
-  -webkit-animation-duration: 5s; 
-  color: white;
+    color: black;
+    -webkit-animation-name: blackWhite;
+    -webkit-animation-duration: 5s;
+    color: white;
 }
 
 div#inputContainer {
@@ -259,11 +285,20 @@ div#outputDiv {
     z-index: 10;
 }
 
-div#outputDiv h2, .center {
+div#outputDiv h2,
+.center {
     text-align: center;
 }
 
 div#outputDiv table {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+textarea#importTextArea {
+    display: block;
+    width: 50%;
+    height: 100px;
     margin-left: auto;
     margin-right: auto;
 }
