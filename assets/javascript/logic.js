@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function displaySearchResults(searchResultsArray, parentFunction) {
         let resultsHeader = document.createElement("H2");
+        resultsHeader.id = "resultsHeader";
         let numberOfResults = 0;
         if (parentFunction === "search") {
             if (searchResultsArray.length === 0) {
@@ -97,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
         } else if (parentFunction === "editedItem") {
             numberOfResults = "Review Changes Below";
         } else if (parentFunction === "last") {
-            numberOfResults = "Last entry:";
+            numberOfResults = "LAST ENTRY:";
         }
         let numberOfResultsText = document.createTextNode(numberOfResults);
         resultsHeader.appendChild(numberOfResultsText);
@@ -154,7 +155,7 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             searchResultsTable.appendChild(searchResultsTR);
         });
-        getById("outputDiv").innerHTML = "";
+        // getById("outputDiv").innerHTML = "";
         getById("outputDiv").appendChild(searchResultsTable);
     }
     // END
