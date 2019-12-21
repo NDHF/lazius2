@@ -768,7 +768,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function showLastEntry() {
-        console.log(functionCurrentlyRunning);
         if (database === undefined) {
             noDBErrorCatch();
         } else if (database.databaseArray.length === 0) {

@@ -115,7 +115,6 @@
     <script src="assets/javascript/logic.js"></script>
     <script>
         function deleteParameterDiv(targetParameterDiv) {
-            console.log(targetParameterDiv);
             let paramDivs = document.getElementsByClassName("dbParameterDiv");
             let paramDivsArray = Array.from(paramDivs);
 
@@ -128,27 +127,10 @@
         }
         function moveParameterDiv(targetArrowDiv, leftOrRight) {
             let editingContainer = document.getElementById("dbEditingContainer");
-            console.log("editingContainer:");
-            console.log(editingContainer);
-            console.log("targetArrowDiv:");
-            console.log(targetArrowDiv);
             let targetParameterDiv = targetArrowDiv.parentNode.parentNode;
-            console.log("targetParameterDiv");
-            console.log(targetParameterDiv);
             let paramDivs = document.getElementsByClassName("dbParameterDiv");
             let paramDivsArray = Array.from(paramDivs);
-            console.log("paramDivsArray:");
-            console.log(paramDivsArray);
             let indexOfTarget = paramDivsArray.indexOf(targetArrowDiv.parentNode.parentNode);
-            console.log("indexOfTarget:");
-            console.log(indexOfTarget);
-            console.log("leftOrRight:");
-            console.log(leftOrRight);
-            console.log("indexOfTarget with leftOrRightApplied");
-            console.log(indexOfTarget + leftOrRight);
-            console.log("parameter div the first one will be placed ahead of:");
-            console.log(editingContainer.children[indexOfTarget + leftOrRight]);
-            console.log(editingContainer.children);
             editingContainer.removeChild(editingContainer.children[indexOfTarget]);
             editingContainer.insertBefore(targetParameterDiv, editingContainer.children[indexOfTarget + leftOrRight]);
         }
