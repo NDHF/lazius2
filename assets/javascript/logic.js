@@ -12,7 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const arrayOfFunctionNames = [
         "add", "edit", "search", "import", "param",
         "print", "commands", "delete", "newdb", "editdb",
-        "last"
+        "last", "all"
     ];
 
     let newDatabaseParameterArray = [];
@@ -99,6 +99,8 @@ document.addEventListener("DOMContentLoaded", function () {
             numberOfResults = "Review Changes Below";
         } else if (parentFunction === "last") {
             numberOfResults = "LAST ENTRY:";
+        } else if (parentFunction === "all") {
+            numberOfResults = "DISPLAYING ALL ENTRIES:";
         }
         let numberOfResultsText = document.createTextNode(numberOfResults);
         resultsHeader.appendChild(numberOfResultsText);
@@ -186,7 +188,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 getById("outputDiv").innerHTML = "";
                 database = parsedTextArea;
                 userPrompt("Database imported. Press 'Enter' to continue.");
-                showLastEntry();
+                showLastEntry("last");
                 localStorage.setItem("db", JSON.stringify(database));
                 functionCurrentlyRunning = "standby";
             }
@@ -235,7 +237,16 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }
                 });
-                searchFunction(searchObject);
+                let noLength = (Object.keys(searchObject).length === 0);
+                let searchObjectIsEmpty = (noLength && searchObject.constructor === Object);
+                if (searchObjectIsEmpty) {
+                    let noSearchHeader = document.createElement("H2");
+                    let noSearchHeaderText = document.createTextNode("You didn't search for anything.");
+                    noSearchHeader.appendChild(noSearchHeaderText);
+                    getById("outputDiv").appendChild(noSearchHeader);
+                } else {
+                    searchFunction(searchObject);
+                }
             }
             buildSearchObject(database.bufferArray);
         }
@@ -348,8 +359,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "quit"
             },
             {
-                explanation: "Show last entry:",
+                explanation: "Show last entry in database:",
                 name: "last"
+            },
+            {
+                explanation: "Show all entries in database:",
+                name: "all"
             }
         ];
         let commandHeading = document.createElement("H2");
@@ -767,16 +782,22 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     };
 
-    function showLastEntry() {
+    function showLastEntry(lastOrAll) {
         if (database === undefined) {
             noDBErrorCatch();
         } else if (database.databaseArray.length === 0) {
             getById("outputDiv").innerHTML = "There are no entries in the database.";
         } else if (database.databaseArray.length > 0) {
-            displaySearchResults([database.databaseArray[database.databaseArray.length - 1]], "last");
-            functionCurrentlyRunning = "standby"
+            if (lastOrAll === "last") {
+                displaySearchResults([database.databaseArray[database.databaseArray.length - 1]], "last");
+                functionCurrentlyRunning = "standby";
+            } else if (lastOrAll === "all") {
+                displaySearchResults(database.databaseArray, "all");
+                functionCurrentlyRunning = "standby";
+            }
         }
     }
+
     // CORE COMMAND FUNCTIONS END
 
     // CORE FUNCTION MANAGEMENT START
@@ -800,8 +821,8 @@ document.addEventListener("DOMContentLoaded", function () {
             deleteDB("functionLaunched");
         } else if ((input === "newdb") || (input === "editdb")) {
             databaseEditingLiaison(input);
-        } else if (input === "last") {
-            showLastEntry();
+        } else if ((input === "last") || (input === "all")) {
+            showLastEntry(input);
         }
     };
 
