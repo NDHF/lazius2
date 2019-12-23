@@ -389,7 +389,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function edit(input) {
-
         if ((database === undefined) || (database.databaseArray.length === 0)) {
             noDBErrorCatch();
         } else {
@@ -854,6 +853,8 @@ document.addEventListener("DOMContentLoaded", function () {
         function undoLogic() {
             if (functionCurrentlyRunning === "new") {
                 newDatabaseParameterArray.pop();
+            } else if (functionCurrentlyRunning === "edit")  {
+                database.bufferArray = [];
             } else {
                 database.bufferArray.pop();
             }
@@ -921,6 +922,10 @@ document.addEventListener("DOMContentLoaded", function () {
     function enterLogic() {
         if (event.key === "Enter") {
             let input = getById("input").value;
+            console.log(input);
+            if (database !== undefined) {
+                console.log(database.bufferArray.length);
+            }
             keylogger(input);
             coreInputLogic(input);
             getById("input").focus();
