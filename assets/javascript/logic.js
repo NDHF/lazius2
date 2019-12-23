@@ -727,18 +727,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function convertObjectArrayToObject() {
             let object = {};
-            let i;
-            for (i = 0; i < database.bufferArray.length - 1; i += 1) {
-                if (database.dataStructureArray[i].parameterInputType === "number") {
-                    let objectArrayItem = parseFloat(database.bufferArray[i]);
-                    if (isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
-                        objectArrayItem = 0;
+            function loopThroughBufferArray(item, index) {
+                if (index < (database.bufferArray.length - 1)) {
+                    if (database.dataStructureArray[index].parameterInputType === "number") {
+                        let objectArrayItem = parseFloat(item);
+                        if (isNaN(objectArrayItem) || objectArrayItem === undefined) {
+                            objectArrayItem = 0;
+                        }
+                        object[database.dataStructureArray[index].parameterName] = objectArrayItem;
+                    } else {
+                        object[database.dataStructureArray[index].parameterName] = item;
                     }
-                    object[database.dataStructureArray[i].parameterName] = objectArrayItem;
-                } else {
-                    object[database.dataStructureArray[i].parameterName] = database.bufferArray[i];
                 }
-            }
+            };
+            database.bufferArray.forEach(loopThroughBufferArray);
             // function seeIfItAlreadyExists(object) {
             //     console.log("nothing yet.")
             // }
