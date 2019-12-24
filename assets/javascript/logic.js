@@ -331,26 +331,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "search"
             },
             {
-                explanation: "Create a new database: ",
-                name: "newdb"
-            },
-            {
-                explanation: "Import an existing inventory: ",
-                name: "import"
-            },
-            {
-                explanation: "Edit an inventory's parameters",
-                name: "editdb"
-            },
-            {
-                explanation: "Show list of inventory parameters: ",
-                name: "param"
-            },
-            {
-                explanation: "Print inventory to clipboard: ",
-                name: "print"
-            },
-            {
                 explanation: "Undo last entry: ",
                 name: "undo"
             },
@@ -359,12 +339,32 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "quit"
             },
             {
+                explanation: "Import an existing inventory: ",
+                name: "import"
+            },
+            {
+                explanation: "Show list of inventory parameters: ",
+                name: "param"
+            },
+            {
                 explanation: "Show last entry in database:",
                 name: "last"
             },
             {
                 explanation: "Show all entries in database:",
                 name: "all"
+            },
+            {
+                explanation: "Print inventory to clipboard: ",
+                name: "print"
+            },
+            {
+                explanation: "Create a new database: ",
+                name: "newdb"
+            },
+            {
+                explanation: "Edit an inventory's parameters",
+                name: "editdb"
             },
             {
                 explanation: "Delete current database:",
