@@ -101,6 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
             numberOfResults = "LAST ENTRY:";
         } else if (parentFunction === "all") {
             numberOfResults = "DISPLAYING ALL ENTRIES:";
+        } else if (parentFunction === "alreadyExists") {
+            numberOfResults = "POSSIBLE MATCH:"
         }
         let numberOfResultsText = document.createTextNode(numberOfResults);
         resultsHeader.appendChild(numberOfResultsText);
@@ -785,8 +787,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     objectInDatabaseArrayToArray = Object.values(objectInDatabaseArray);
                     let mismatchCounter = 0;
                     function checkAgainstObjectValues(item, index) {
-                        // console.log(item);
-                        // console.log(objectInDatabaseArrayToArray[index]);
                         let notLastItem = (index < newlyBuiltObjectToArray.length - 1);
                         let theyDoNotMatch = ((item !== objectInDatabaseArrayToArray[index]));
                         if (notLastItem && theyDoNotMatch) {
@@ -794,9 +794,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }
                     newlyBuiltObjectToArray.forEach(checkAgainstObjectValues);
-                    console.log(mismatchCounter);
                     if (mismatchCounter === 0) {
                         itemAlreadyExists = true;
+                        idOfExistingItem = objectInDatabaseArray.id;
                     }
                 }
                 database.databaseArray.forEach(checkObjectAgainstDatabase);
@@ -808,8 +808,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 displaySearchResults([object], "add");
             }
             if (itemAlreadyExists) {
-                let matchDetectedMessage = "Probable match detected: " + 
-                "Item " + idOfExistingItem + 
+                displaySearchResults([database.databaseArray[idOfExistingItem]], "alreadyExists");
+                let matchDetectedMessage = "Probable match detected. " + 
+                "See Below." + 
                 "\n" +
                 "\n" +
                 "Do you want to add it anyway?";
