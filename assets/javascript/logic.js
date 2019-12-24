@@ -363,7 +363,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "newdb"
             },
             {
-                explanation: "Edit an database's parameters:",
+                explanation: "Edit a database's parameters:",
                 name: "editdb"
             },
             {
