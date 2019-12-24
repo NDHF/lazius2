@@ -16,7 +16,6 @@ document.addEventListener("DOMContentLoaded", function () {
         "last", "all"
     ];
 
-    let newDatabaseParameterArray = [];
     let keylogArray = [];
 
     // GLOBAL VARIABLES END
@@ -193,7 +192,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         database = parsedTextArea;
                         localStorage.setItem(database.name, JSON.stringify(database));
                         alert("Saved to local storage as " + dbNameForStorage);
-                        console.log(localStorage.getItem(dbNameForStorage));
                         userPrompt("Database imported. Press 'Enter' to continue.");
                         showLastEntry("last");
                         functionCurrentlyRunning = "standby";
@@ -604,11 +602,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 databaseObject.dataStructureArray.push(idObject);
             }
             addIDObject();
-            if (database === undefined) {
-                database = databaseObject;
-            } else {
-                database.dataStructureArray = databaseObject.dataStructureArray;
-            }
+            // SAVE TO LOCAL STORAGE
+            let dbNameFromEditingWindow = databaseObject.name;
+            localStorage.setItem(dbNameFromEditingWindow, JSON.stringify(databaseObject));
+            database = JSON.parse(localStorage.getItem(dbNameFromEditingWindow));
         }
         checkForRequiredInputs();
     }
@@ -820,7 +817,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 // THIS SAVES THE LATEST ENTRY TO LOCAL STORAGE
                 let dbName = database.name;
                 localStorage.setItem(dbName, JSON.stringify(database));
-                console.log(localStorage.getItem(dbName));
                 getById("outputDiv").innerHTML = "";
                 functionLauncher("add");
             }
@@ -964,10 +960,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function enterLogic() {
         if (event.key === "Enter") {
             let input = getById("input").value;
-            console.log(input);
-            if (database !== undefined) {
-                console.log(database.bufferArray.length);
-            }
             keylogger(input);
             coreInputLogic(input);
             getById("input").focus();
