@@ -1,7 +1,8 @@
 console.log(
     "LAZIUS" + "\n" +
     "VERSION 2.1" + "\n" +
-    "BY NICHOLAS BERNHARD" + "\n" + "\u00A9 2019"
+    "BY NICHOLAS BERNHARD \n" +
+    "\u00A9 2019 BERNHARD MUSEUM SERVICES, LLC"
 );
 
 // EVENT LISTENER WRAPPER
@@ -176,21 +177,47 @@ document.addEventListener("DOMContentLoaded", function () {
             functionCurrentlyRunning = "standby";
         } else {
             if (input === "functionLaunched") {
-                getById("input").disabled = true;
-                let importTextArea = document.createElement("TEXTAREA");
-                importTextArea.id = "importTextArea";
-                getById("outputDiv").appendChild(importTextArea);
-                getById("importTextArea").focus();
-                userPrompt("Paste stringified JSON database below and hit 'Enter'");
-            } else {
-                let parsedTextArea = JSON.parse(getById("importTextArea").value);
-                getById("input").disabled = true;
-                getById("outputDiv").innerHTML = "";
-                database = parsedTextArea;
-                userPrompt("Database imported. Press 'Enter' to continue.");
-                showLastEntry("last");
-                localStorage.setItem("db", JSON.stringify(database));
-                functionCurrentlyRunning = "standby";
+                let textOrStoragePrompt = prompt("Importing from text or storage?");
+                if (((textOrStoragePrompt !== "text") && (textOrStoragePrompt !== "storage")) || (textOrStoragePrompt === null)) {
+                    functionCurrentlyRunning = "standby";
+                    printCommands();
+                } else if (textOrStoragePrompt.toLowerCase() === "text") {
+                    let pasteTextDB = prompt("Paste the stringified JSON table here:");
+                    if (pasteTextDB === null) {
+                        getById("input").disabled = false;
+                        printCommands();
+                    } else {
+                        let parsedTextArea = JSON.parse(pasteTextDB);
+                        getById("input").disabled = true;
+                        getById("outputDiv").innerHTML = "";
+                        database = parsedTextArea;
+                        localStorage.setItem(database.name, JSON.stringify(database));
+                        alert("Saved to local storage as " + dbNameForStorage);
+                        console.log(localStorage.getItem(dbNameForStorage));
+                        userPrompt("Database imported. Press 'Enter' to continue.");
+                        showLastEntry("last");
+                        functionCurrentlyRunning = "standby";
+                    }
+                } else if (textOrStoragePrompt === "storage") {
+                    let getDBByNamePrompt = prompt("Enter name of database in storage:");
+                    if (getDBByNamePrompt === null) {
+                        functionCurrentlyRunning = "standby";
+                        printCommands();
+                    } else {
+                        if (localStorage.getItem(getDBByNamePrompt) === null) {
+                            alert("No database by that name was found in storage.");
+                            functionCurrentlyRunning = "standby";
+                            printCommands();
+                        } else {
+                            getById("input").disabled = true;
+                            getById("outputDiv").innerHTML = "";
+                            database = JSON.parse(localStorage.getItem(getDBByNamePrompt));
+                            userPrompt("Database " + getDBByNamePrompt + " imported. Press 'Enter' to continue.");
+                            showLastEntry("last");
+                            functionCurrentlyRunning = "standby";
+                        }
+                    }
+                }
             }
         }
     };
@@ -463,6 +490,9 @@ document.addEventListener("DOMContentLoaded", function () {
                         applyEdits();
                     } else if (database.bufferArray.length > (database.dataStructureArray.length - 1)) {
                         database.bufferArray = [];
+                        // THIS SAVES THE DATABASE TO LOCAL STORAGE
+                        let dbName = database.name;
+                        localStorage.setItem(dbName, JSON.stringify(database));
                         getById("outputDiv").innerHTML = "";
                         functionLauncher("edit");
                     }
@@ -479,6 +509,10 @@ document.addEventListener("DOMContentLoaded", function () {
             if (database === undefined) {
                 noDBErrorCatch();
             } else {
+                // THIS SAVES THE DATABASE TO LOCAL STORAGE
+                // let dbName = database.name;
+                // localStorage.setItem(dbName, JSON.stringify(database));
+                // let dbFromStorage = localStorage.getItem(dbName);
                 printSomething(database);
                 userPrompt("The current database has been copied to clipboard." +
                     "<br>" +
@@ -731,6 +765,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         function convertObjectArrayToObject() {
             let object = {};
+
             function loopThroughBufferArray(item, index) {
                 if (index < (database.bufferArray.length - 1)) {
                     if (database.dataStructureArray[index].parameterInputType === "number") {
@@ -782,6 +817,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 convertObjectArrayToObject();
             } else if (database.bufferArray.length > database.dataStructureArray.length) {
                 database.bufferArray = [];
+                // THIS SAVES THE LATEST ENTRY TO LOCAL STORAGE
+                let dbName = database.name;
+                localStorage.setItem(dbName, JSON.stringify(database));
+                console.log(localStorage.getItem(dbName));
                 getById("outputDiv").innerHTML = "";
                 functionLauncher("add");
             }
@@ -856,7 +895,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let functionIsRunning = (functionCurrentlyRunning !== "standby");
 
         function undoLogic() {
-            if (functionCurrentlyRunning === "edit")  {
+            if (functionCurrentlyRunning === "edit") {
                 database.bufferArray = [];
             } else {
                 database.bufferArray.pop();
