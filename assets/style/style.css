@@ -48,6 +48,10 @@ header {
     text-align: center;
 }
 
+table#commandTable td:last-child {
+    font-weight: bold;
+}
+
 footer.standby {
     width: 0px;
     height: 0px;

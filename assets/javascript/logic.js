@@ -376,6 +376,7 @@ document.addEventListener("DOMContentLoaded", function () {
         commandHeading.appendChild(commandHeadingText);
         getById("outputDiv").appendChild(commandHeading);
         let commandTable = document.createElement("TABLE");
+        commandTable.id = "commandTable";
         commandArray.forEach(function (item) {
             let commandTR = document.createElement("TR");
             let explanationTD = document.createElement("TD");
