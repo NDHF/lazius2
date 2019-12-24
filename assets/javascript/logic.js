@@ -851,9 +851,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let functionIsRunning = (functionCurrentlyRunning !== "standby");
 
         function undoLogic() {
-            if (functionCurrentlyRunning === "new") {
-                newDatabaseParameterArray.pop();
-            } else if (functionCurrentlyRunning === "edit")  {
+            if (functionCurrentlyRunning === "edit")  {
                 database.bufferArray = [];
             } else {
                 database.bufferArray.pop();
