@@ -365,6 +365,10 @@ document.addEventListener("DOMContentLoaded", function () {
             {
                 explanation: "Show all entries in database:",
                 name: "all"
+            },
+            {
+                explanation: "Delete current database:",
+                name: "delete"
             }
         ];
         let commandHeading = document.createElement("H2");
