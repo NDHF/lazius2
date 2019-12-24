@@ -191,7 +191,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         getById("outputDiv").innerHTML = "";
                         database = parsedTextArea;
                         localStorage.setItem(database.name, JSON.stringify(database));
-                        alert("Saved to local storage as " + dbNameForStorage);
+                        alert("Saved to local storage as " + database.name);
                         userPrompt("Database imported. Press 'Enter' to continue.");
                         showLastEntry("last");
                         functionCurrentlyRunning = "standby";
@@ -777,13 +777,58 @@ document.addEventListener("DOMContentLoaded", function () {
                 }
             };
             database.bufferArray.forEach(loopThroughBufferArray);
-            // function seeIfItAlreadyExists(object) {
-            //     console.log("nothing yet.")
-            // }
-            // seeIfItAlreadyExists(object);
-            database.databaseArray.push(object);
-            database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
-            displaySearchResults([object], "add");
+            let itemAlreadyExists = false;
+            let idOfExistingItem = 0;
+            function seeIfItAlreadyExists(newlyBuiltObject) {
+                let newlyBuiltObjectToArray = Object.values(newlyBuiltObject);
+                function checkObjectAgainstDatabase(objectInDatabaseArray) {
+                    objectInDatabaseArrayToArray = Object.values(objectInDatabaseArray);
+                    let mismatchCounter = 0;
+                    function checkAgainstObjectValues(item, index) {
+                        // console.log(item);
+                        // console.log(objectInDatabaseArrayToArray[index]);
+                        let notLastItem = (index < newlyBuiltObjectToArray.length - 1);
+                        let theyDoNotMatch = ((item !== objectInDatabaseArrayToArray[index]));
+                        if (notLastItem && theyDoNotMatch) {
+                            mismatchCounter += 1;
+                        }
+                    }
+                    newlyBuiltObjectToArray.forEach(checkAgainstObjectValues);
+                    console.log(mismatchCounter);
+                    if (mismatchCounter === 0) {
+                        itemAlreadyExists = true;
+                    }
+                }
+                database.databaseArray.forEach(checkObjectAgainstDatabase);
+            }
+            seeIfItAlreadyExists(object);
+            function addItemToDatabase() {
+                database.databaseArray.push(object);
+                database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
+                displaySearchResults([object], "add");
+            }
+            if (itemAlreadyExists) {
+                let matchDetectedMessage = "Probable match detected: " + 
+                "Item " + idOfExistingItem + 
+                "\n" +
+                "\n" +
+                "Do you want to add it anyway?";
+                let itemExistsButAddAnywayConfirm = confirm(matchDetectedMessage);
+                if (itemExistsButAddAnywayConfirm === false) {
+                    userPrompt(
+                        "Cancelled." +
+                        "<br>" +
+                        "Please enter function name to begin."
+                    );
+                    getById("input").disabled = false;
+                    functionCurrentlyRunning = "standby";
+                    printCommands();
+                } else {
+                    addItemToDatabase();
+                }
+            } else {
+                addItemToDatabase();
+            }
         }
         if (database === undefined) {
             noDBErrorCatch();
