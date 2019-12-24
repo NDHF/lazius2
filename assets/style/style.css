@@ -1,5 +1,9 @@
 /* STYLING FOR LAZIUS 2 */
 
+body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
 div#container {
     height: 100%;
     width: 100%;

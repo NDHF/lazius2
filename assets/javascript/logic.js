@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function printCommands() {
         functionCurrentlyRunning = "standby";
         let commandArray = [{
-                explanation: "Add to Inventory: ",
+                explanation: "Add to database: ",
                 name: "add"
             },
             {
@@ -327,7 +327,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "edit"
             },
             {
-                explanation: "Search inventory: ",
+                explanation: "Search database: ",
                 name: "search"
             },
             {
@@ -339,11 +339,11 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "quit"
             },
             {
-                explanation: "Import an existing inventory: ",
+                explanation: "Import an existing database: ",
                 name: "import"
             },
             {
-                explanation: "Show list of inventory parameters: ",
+                explanation: "Show list of database parameters: ",
                 name: "param"
             },
             {
@@ -355,15 +355,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 name: "all"
             },
             {
-                explanation: "Print inventory to clipboard: ",
+                explanation: "Print database to clipboard:",
                 name: "print"
             },
             {
-                explanation: "Create a new database: ",
+                explanation: "Create a new database:",
                 name: "newdb"
             },
             {
-                explanation: "Edit an inventory's parameters",
+                explanation: "Edit an database's parameters:",
                 name: "editdb"
             },
             {
@@ -594,14 +594,14 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             if (input === "newdb") {
                 warningMessage = warningMessage.replace("placeholder",
-                    "You are already working with an existing inventory. " +
+                    "You are already working with an existing database. " +
                     "Creating a new database will delete the old one. "
                 );
                 createWarningPopUp();
             } else if (input === "editdb") {
                 warningMessage = warningMessage.replace("placeholder",
-                    "You are about to edit your inventory's parameters. " +
-                    "This may change the performance of your inventory. "
+                    "You are about to edit your database's parameters. " +
+                    "This may change the performance of your database. "
                 );
                 createWarningPopUp();
             }
@@ -700,7 +700,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function deleteDB(input) {
         if (input === "functionLaunched") {
             userPrompt(
-                "You are about to delete your inventory." + "<br>" +
+                "You are about to delete your database." + "<br>" +
                 "Please consider making a backup." + "<br>" +
                 "Press Y to continue, press N to cancel"
             );
@@ -715,7 +715,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     database = undefined;
                     functionCurrentlyRunning = "standby";
                     userPrompt(
-                        "The inventory has been deleted." + "<br>" +
+                        "The database has been deleted." + "<br>" +
                         "Please enter a function name."
                     );
                 }
@@ -870,7 +870,7 @@ document.addEventListener("DOMContentLoaded", function () {
             functionCurrentlyRunning = "standby";
             getById("input").removeEventListener("keyup", listenForQuit);
             getById("input").removeAttribute("maxLength");
-            userPrompt("Please enter a function name to begin");
+            userPrompt("Please enter a function name to begin.");
             printCommands();
         }
         if (functionIsRunning) {
@@ -892,7 +892,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 functionLauncher(input);
             } else {
                 getById("outputDiv").innerHTML = "";
-                userPrompt("Please enter a function name to begin");
+                userPrompt("Please enter a function name to begin.");
                 printCommands();
             }
         }
