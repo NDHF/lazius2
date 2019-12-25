@@ -808,9 +808,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 displaySearchResults([object], "add");
             }
             if (itemAlreadyExists) {
-                displaySearchResults([database.databaseArray[idOfExistingItem]], "alreadyExists");
                 let matchDetectedMessage = "Probable match detected. " + 
-                "See Below." + 
+                "Item ID: " + idOfExistingItem + 
                 "\n" +
                 "\n" +
                 "Do you want to add it anyway?";
