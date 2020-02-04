@@ -23,11 +23,11 @@ document.addEventListener("DOMContentLoaded", function () {
     // FUNCTIONS USED BY THE CORE COMMAND FUNCTIONS
     function getById(id) {
         return document.getElementById(id);
-    };
+    }
 
     function userPrompt(messageForUser) {
         getById("userPrompt").innerHTML = messageForUser;
-    };
+    }
 
     function printSomething(variable) {
         let arrayExportTextArea = document.createElement("TEXTAREA");
@@ -234,15 +234,26 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.databaseArray.forEach(function (databaseItem) {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
-                        if (typeof databaseItem[searchObjectItem] === "string") {
-                            let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
-                            let soItemLowerCase = searchObject[searchObjectItem].toLowerCase();
-                            if (dbItemLowerCase.includes(soItemLowerCase)) {
-                                matchCounter += 1;
+                        console.log(searchObjectItem);
+                        if (Array.isArray(databaseItem[searchObjectItem])) {
+                            console.length(databaseItem[searchObjectItem]);
+                            function loopSOI(soiItem) {
+                                if (databaseItem[searchObjectItem].includes(soiItem)) {
+                                    matchCounter += 1;
+                                }
                             }
+                            databaseItem[searchObjectItem].forEach(loopSOI);
                         } else {
-                            if (databaseItem[searchObjectItem] === searchObject[searchObjectItem]) {
-                                matchCounter += 1;
+                            if (typeof databaseItem[searchObjectItem] === "string") {
+                                let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
+                                let soItemLowerCase = searchObject[searchObjectItem].toLowerCase();
+                                if (dbItemLowerCase.includes(soItemLowerCase)) {
+                                    matchCounter += 1;
+                                }
+                            } else {
+                                if (databaseItem[searchObjectItem] === searchObject[searchObjectItem]) {
+                                    matchCounter += 1;
+                                }
                             }
                         }
                     });
@@ -259,7 +270,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (item !== "") {
                         if (database.dataStructureArray[index].parameterInputType === "number") {
                             searchObject[database.dataStructureArray[index].parameterName] = parseFloat(item);
-                        } else {
+                        } else if (database.dataStructureArray[index].parameterInputType === "array") {
+                            searchObject[database.dataStructureArray[index].parameterName] = item.split(",");
+                        } else  {
                             searchObject[database.dataStructureArray[index].parameterName] = item;
                         }
                     }
@@ -421,6 +434,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     function edit(input) {
+        // Reset input size to default
+        getById("input").size = 20;
         if ((database === undefined) || (database.databaseArray.length === 0)) {
             noDBErrorCatch();
         } else {
@@ -449,6 +464,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         userPrompt("Edit " +
                             database.dataStructureArray[database.bufferArray.length].parameterToDisplay +
                             editMessage);
+                        if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "array") {
+                            // Widen input field for editing arrays
+                            getById("input").size = 75;
+                            getById("input").value = database.databaseArray[database.bufferArray.length][database.dataStructureArray[database.bufferArray.length].parameterName];
+                        }
                     } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
                         getById("input").removeEventListener("keyup", listenForQuit);
@@ -470,6 +490,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                             objectArrayItem = 0;
                                         }
                                         editingObject[database.dataStructureArray[index].parameterName] = objectArrayItem;
+                                    } else if (database.dataStructureArray[index].parameterInputType === "array") {
+                                        editingObject[database.dataStructureArray[index].parameterName] = item.split(",");
                                     } else {
                                         editingObject[database.dataStructureArray[index].parameterName] = item;
                                     }
@@ -773,6 +795,8 @@ document.addEventListener("DOMContentLoaded", function () {
                             objectArrayItem = 0;
                         }
                         object[database.dataStructureArray[index].parameterName] = objectArrayItem;
+                    } else if (database.dataStructureArray[index].parameterInputType === "array") {
+                        object[database.dataStructureArray[index].parameterName] = item.split(","); 
                     } else {
                         object[database.dataStructureArray[index].parameterName] = item;
                     }
@@ -808,8 +832,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 displaySearchResults([object], "add");
             }
             if (itemAlreadyExists) {
-                let matchDetectedMessage = "Probable match detected. " + 
-                "Item ID: " + idOfExistingItem + 
+                let matchDetectedMessage = "Probable match detected. " +
+                "Item ID: " + idOfExistingItem +
                 "\n" +
                 "\n" +
                 "Do you want to add it anyway?";
