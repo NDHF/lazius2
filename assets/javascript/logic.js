@@ -234,13 +234,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.databaseArray.forEach(function (databaseItem) {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
+                        console.log(searchObjectItem);
                         if (Array.isArray(databaseItem[searchObjectItem])) {
+                            console.length(databaseItem[searchObjectItem]);
                             function loopSOI(soiItem) {
                                 if (databaseItem[searchObjectItem].includes(soiItem)) {
                                     matchCounter += 1;
                                 }
                             }
-                            searchObject[searchObjectItem].forEach(loopSOI);
+                            databaseItem[searchObjectItem].forEach(loopSOI);
                         } else {
                             if (typeof databaseItem[searchObjectItem] === "string") {
                                 let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
@@ -626,6 +628,11 @@ document.addEventListener("DOMContentLoaded", function () {
             addIDObject();
             // SAVE TO LOCAL STORAGE
             let dbNameFromEditingWindow = databaseObject.name;
+            // If you are editing a database, this prevents the existing
+            // database entries from being overwritten. 
+            if (database !== undefined) {
+                databaseObject.databaseArray = database.databaseArray;
+            } 
             localStorage.setItem(dbNameFromEditingWindow, JSON.stringify(databaseObject));
             database = JSON.parse(localStorage.getItem(dbNameFromEditingWindow));
         }
@@ -781,6 +788,7 @@ document.addEventListener("DOMContentLoaded", function () {
         getById("input").removeEventListener("keyup", listenForQuit);
         getById("input").type = "input";
         getById("input").disabled = false;
+        getById("outputDiv").innerHTML = "";
 
         function convertObjectArrayToObject() {
             let object = {};
