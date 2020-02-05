@@ -32,6 +32,12 @@
             <ul>
                 <li><a href="#tableOfContents">TABLE OF CONTENTS</a></li>
                 <li><a href="#overviewSection">OVERVIEW</a></li>
+                <li><a href="#programLayout">PROGRAM LAYOUT</a></li>
+                <li><a href="">CREATING A DATABASE</a></li>
+                <li><a href="">EDITING DATABASE PARAMETERS</a></li>
+                <li><a href="">ADDING AN ENTRY</a></li>
+                <li><a href="">EDITING AN ENTRY</a></li>
+                <li><a href="">IMPORTING AND EXPORTING YOUR DATABASE</a></li>
                 <li><a href="#credits">CREDITS</a></li>
             </ul>
         </section>
@@ -48,6 +54,117 @@
                 Editing entries and searching the inventory are also performed with the keyboard.</p>
 
             <p>Data is stored in the <strong>JSON</strong> format.</p>
+        </section>
+
+        <section id="programLayout">
+            <h1>PROGRAM LAYOUT</h1>
+
+            <p>The <strong>Lazius</strong> database uses a database object with the following structure:</p>
+
+            <code>
+                {
+                    <br>
+                    "name":"DB Test",
+                    <br>
+                    "comments":"",
+                    <br>
+                    "contactInfo":"",
+                    <br>
+                    "dataStructureArray":[
+                    <br>
+                        {
+                            <br>
+                            "parameterName":"title",
+                            <br>
+                            "parameterToDisplay":"Title",
+                            <br>
+                            "parameterNotes":"",
+                            <br>
+                            "parameterInputType":"input",
+                            <br>
+                            "parameterAutoComplete":"no"},
+                            <br>
+                        {
+                            <br>
+                            "parameterName":"authorLastName",
+                            <br>
+                            "parameterToDisplay":"Author, Last Name",
+                            <br>
+                            "parameterNotes":"",
+                            <br>
+                            "parameterInputType":"input",
+                            <br>
+                            "parameterAutoComplete":"no"
+                            <br>
+                        },
+                        <br>
+                        {
+                            <br>
+                            "parameterName":"authorFirstName",
+                            "parameterToDisplay":"Author, First Name",
+                            "parameterNotes":"",
+                            "parameterInputType":"input",
+                            "parameterAutoComplete":"no"
+                        },
+                        {
+                            "parameterName":"location",
+                            "parameterToDisplay":"Location",
+                            "parameterNotes":"",
+                            "parameterInputType":"input",
+                            "parameterAutoComplete":"yes"
+                        },
+                        {
+                            "parameterName":"topics",
+                            "parameterToDisplay":"Topic",
+                            "parameterNotes":"",
+                            "parameterInputType":"array",
+                            "parameterAutoComplete":"no"
+                        },
+                        {
+                            "parameterName":"quantity",
+                            "parameterToDisplay":"Quantity",
+                            "parameterNotes":"",
+                            "parameterInputType":"number",
+                            "parameterAutoComplete":"no"
+                        },
+                        {
+                            "parameterName":"id",
+                            "parameterToDisplay":"ID",
+                            "parameterNotes":"",
+                            "parameterInputType":"number",
+                            "parameterAutoComplete":"no"
+                        }],
+                        "databaseArray":[
+                        {
+                            "title":"Armchair Universe",
+                            "authorLastName":"Dewdney",
+                            "authorFirstName":"A.K.",
+                            "location":"Main Shelf",
+                            "topics":["fractals","computer science","recreational mathematics","analog computers"],
+                            "quantity":1,
+                            "id":1
+                        },
+                        {
+                            "title":"Kitty and the Midnight Hour",
+                            "authorLastName":"Vaughn",
+                            "authorFirstName":"Carrie",
+                            "location":"Main Shelf",
+                            "topics":["Horror","Romance Horror","Talk Radio","Werewolves","Vampires"],
+                            "quantity":1,
+                            "id":2
+                        }],
+                        "bufferArray":[],
+                        "dateCreated":"2020-02-05T17:26:43.869Z"
+                }
+            </code>
+
+            <ul>
+                <li>The <b>Data Structure Array</b> contains all information on the database parameters:
+                    their names, how those names are displayed to the user, and what kind of information the parameter
+                    uses (either a string, number, or array)</li>
+                <li>The <b>Database Array</b> contains all the contents of the database.</li>
+                <li>The <b>Buffer Array</b> is used to store values before they are applied to the database.</li>
+            </ul>
         </section>
 
         <section id="creditsSection">
