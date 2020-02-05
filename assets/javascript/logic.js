@@ -234,15 +234,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.databaseArray.forEach(function (databaseItem) {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
-                        console.log(searchObjectItem);
                         if (Array.isArray(databaseItem[searchObjectItem])) {
-                            console.length(databaseItem[searchObjectItem]);
                             function loopSOI(soiItem) {
                                 if (databaseItem[searchObjectItem].includes(soiItem)) {
                                     matchCounter += 1;
                                 }
                             }
-                            databaseItem[searchObjectItem].forEach(loopSOI);
+                            searchObject[searchObjectItem].forEach(loopSOI);
                         } else {
                             if (typeof databaseItem[searchObjectItem] === "string") {
                                 let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
