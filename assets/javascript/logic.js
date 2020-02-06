@@ -264,8 +264,10 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             database.dataStructureArray.forEach(function (param, index) {
                 let searchResultsTD = document.createElement("TD");
-                if ((parentFunction === "editedItem") && (searchResultIndex === 1)) {
-                    if (searchResultsArray[1][param.parameterName] !== searchResultsArray[0][param.parameterName]) {
+                if ((parentFunction === "editedItem") &&
+                (searchResultIndex === 1)) {
+                    if (searchResultsArray[1][param.parameterName] !==
+                        searchResultsArray[0][param.parameterName]) {
                         searchResultsTD.classList.add("highlightRed");
                     }
                 }
@@ -312,7 +314,9 @@ document.addEventListener("DOMContentLoaded", function () {
         } else {
             if (input === "functionLaunched") {
                 let textOrStoragePrompt = prompt("Importing from text or storage?");
-                if (((textOrStoragePrompt !== "text") && (textOrStoragePrompt !== "storage")) || (textOrStoragePrompt === null)) {
+                if (((textOrStoragePrompt !== "text") &&
+                (textOrStoragePrompt !== "storage")) ||
+                (textOrStoragePrompt === null)) {
                     functionCurrentlyRunning = "standby";
                     printCommands();
                 } else if (textOrStoragePrompt.toLowerCase() === "text") {
@@ -363,7 +367,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 "Press Y to continue, press N to cancel"
             );
         } else if (input !== "functionLaunched") {
-            if ((input.toLowerCase() !== "y") && (input.toLowerCase() !== "n")) {
+            if ((input.toLowerCase() !== "y") &&
+            (input.toLowerCase() !== "n")) {
                 getById("input").value = "";
             } else {
                 if (input.toLowerCase() === "n") {
@@ -806,11 +811,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 });
                 let noLength = (Object.keys(searchObject).length === 0);
-                let searchObjectIsEmpty = (noLength && searchObject.constructor === Object);
+                let searchObjectIsEmpty = (noLength &&
+                    searchObject.constructor === Object);
                 if (searchObjectIsEmpty) {
                     let noSearchHeader = document.createElement("H2");
-                    let noSearchHeaderText = document.createTextNode("You didn't search for anything.");
-                    noSearchHeader.appendChild(noSearchHeaderText);
+                    // nst = noSearchText
+                    // nsht = noSearchTextNode
+                    let nst = "You didn't search for anything.";
+                    let nstn = document.createTextNode(nst);
+                    noSearchHeader.appendChild(nstn);
                     getById("outputDiv").appendChild(noSearchHeader);
                 } else {
                     searchFunction(searchObject);
@@ -824,14 +833,17 @@ document.addEventListener("DOMContentLoaded", function () {
             if (input !== "functionLaunched") {
                 database.bufferArray.push(input);
             }
-            if (database.bufferArray.length < database.dataStructureArray.length) {
+            if (database.bufferArray.length <
+                database.dataStructureArray.length) {
                 userPrompt(database.dataStructureArray[database.bufferArray.length].parameterToDisplay +
                     " to search for:");
-            } else if (database.bufferArray.length === database.dataStructureArray.length) {
+            } else if (database.bufferArray.length ===
+                database.dataStructureArray.length) {
                 getById("input").disabled = true;
                 userPrompt("See search results below");
                 searchFunctionChain(database.bufferArray);
-            } else if (database.bufferArray.length > database.dataStructureArray.length) {
+            } else if (database.bufferArray.length >
+                database.dataStructureArray.length) {
                 database.bufferArray = [];
                 getById("outputDiv").innerHTML = "";
                 functionLauncher("search");
@@ -852,7 +864,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (item !== "") {
                     if (database.dataStructureArray[index].parameterInputType === "number") {
                         let objectArrayItem = parseFloat(item);
-                        if (Number.isNaN(objectArrayItem) || (objectArrayItem === undefined)) {
+                        if (Number.isNaN(objectArrayItem) ||
+                        (objectArrayItem === undefined)) {
                             objectArrayItem = 0;
                         }
                         editingObject[database.dataStructureArray[index].parameterName] = objectArrayItem;
@@ -884,7 +897,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 getById("input").addEventListener("keyup", listenForQuit);
                 userPrompt("Enter ID of item you wish to edit");
             } else {
-                if ((getById("input").type === "number") && (database.bufferArray.length === 0)) {
+                if ((getById("input").type === "number") &&
+                (database.bufferArray.length === 0)) {
                     if (input === "") {
                         functionLauncher("edit");
                     } else {
@@ -941,7 +955,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 if (index < (database.bufferArray.length - 1)) {
                     if (database.dataStructureArray[index].parameterInputType === "number") {
                         let objectArrayItem = parseFloat(item);
-                        if (Number.isNaN(objectArrayItem) || objectArrayItem === undefined) {
+                        if (Number.isNaN(objectArrayItem) ||
+                        objectArrayItem === undefined) {
                             objectArrayItem = 0;
                         }
                         object[database.dataStructureArray[index].parameterName] = objectArrayItem;
@@ -965,7 +980,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     function checkAgainstObjectValues(item, index) {
                         let notLastItem = (index < newlyBuiltObjectToArray.length - 1);
-                        let theyDoNotMatch = (item !== objectInDatabaseArrayToArray[index]);
+                        let theyDoNotMatch = (item !==
+                            objectInDatabaseArrayToArray[index]);
                         if (notLastItem && theyDoNotMatch) {
                             mismatchCounter += 1;
                         }
@@ -1017,7 +1033,8 @@ document.addEventListener("DOMContentLoaded", function () {
             if (input !== "functionLaunched") {
                 database.bufferArray.push(input);
             }
-            if (database.bufferArray.length < database.dataStructureArray.length) {
+            if (database.bufferArray.length <
+                database.dataStructureArray.length) {
                 let paramToDisplay = database.dataStructureArray[database.bufferArray.length].parameterToDisplay;
                 let paramNotes = database.dataStructureArray[database.bufferArray.length].parameterNotes;
                 userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
