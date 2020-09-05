@@ -773,13 +773,21 @@ document.addEventListener("DOMContentLoaded", function () {
                 database.databaseArray.forEach(function (databaseItem) {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
+                        let arrayMatch = false;
                         function loopSOI(soiItem) {
-                            if (databaseItem[searchObjectItem].includes(soiItem)) {
-                                matchCounter += 1;
+                            if (searchObject[searchObjectItem].includes(soiItem.toLowerCase())) {
+                                arrayMatch = true;
                             }
                         }
                         if (Array.isArray(databaseItem[searchObjectItem])) {
+                            searchObject[searchObjectItem].forEach(function (lilItem, lilIndex) {
+                                console.log(lilItem);
+                                searchObject[searchObjectItem[lilIndex]] = lilItem.toLowerCase();
+                            });
                             databaseItem[searchObjectItem].forEach(loopSOI);
+                            if (arrayMatch === true) {
+                                matchCounter += 1;
+                            }
                         } else {
                             if (typeof databaseItem[searchObjectItem] === "string") {
                                 let dbItemLowerCase = databaseItem[searchObjectItem].toLowerCase();
@@ -808,7 +816,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (database.dataStructureArray[index].parameterInputType === "number") {
                             searchObject[database.dataStructureArray[index].parameterName] = parseFloat(item);
                         } else if (database.dataStructureArray[index].parameterInputType === "array") {
-                            searchObject[database.dataStructureArray[index].parameterName] = item.split(",");
+                            searchObject[database.dataStructureArray[index].parameterName] = item.split(", ");
                         } else {
                             searchObject[database.dataStructureArray[index].parameterName] = item;
                         }
