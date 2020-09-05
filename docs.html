@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="assets/style/docsStyle.css" />
+    <link rel="icon" type="img/png" href="assets/images/lazius_favicon.png">
     <title>LAZIUS DOCS</title>
 </head>
 
@@ -45,21 +46,30 @@
         <section id="overviewSection">
             <h1>OVERVIEW</h1>
 
-            <p><strong>Lazius</strong> (<i>lot-zee-us</i>) is a <strong><em>browser-based inventory management
+            <p><strong>Lazius</strong> (<i>lot-zee-us</i>) is a 
+                <strong><em>browser-based inventory management
                         program</em></strong> designed
-                for <strong><em>rapid data entry</em></strong>. Adding items to the inventory does not require a mouse,
-                the <strong>Enter</strong> key moves to the next item. This allows a large number of items to be entered
-                into the inventory very quickly, without the hassle of clicking between different input fields in a
-                form.
-                Editing entries and searching the inventory are also performed with the keyboard.</p>
+                for <strong><em>rapid data entry</em></strong>. 
+                Adding items to the inventory does not require a mouse,
+                the <strong>Enter</strong> key moves to the next item. 
+                This allows a large number of items to be entered
+                into the inventory very quickly, without the hassle of 
+                clicking between different input fields in a form. Editing 
+                entries and searching the inventory are also performed with 
+                the keyboard.</p>
 
-            <p>Data is stored in the <strong>JSON</strong> format.</p>
+            <p>Data is stored in the <strong>JSON</strong> format, using the 
+                browser's local storage. The program does not rely on any 
+                prior libraries or frameworks. Data can be copied to the 
+                clipboard and pasted to a text file for long-term storage. 
+            </p>
         </section>
 
         <section id="programLayout">
             <h1>PROGRAM LAYOUT</h1>
 
-            <p>The <strong>Lazius</strong> database uses a database object with the following structure:</p>
+            <p>The <strong>Lazius</strong> database uses a database object 
+                with the following structure:</p>
 
             <code>
                 {
@@ -165,6 +175,11 @@
                 <li>The <b>Database Array</b> contains all the contents of the database.</li>
                 <li>The <b>Buffer Array</b> is used to store values before they are applied to the database.</li>
             </ul>
+
+            <p>This object is stored in the browser's local storage. 
+                Local storage allocates at least 5 MB per domain, which is 
+                plenty for small-scale databases.
+            </p>
         </section>
 
         <section id="creditsSection">
