@@ -1,9 +1,13 @@
-console.log(
-    "LAZIUS" + "\n" +
-    "VERSION 2.1" + "\n" +
-    "BY NICHOLAS BERNHARD \n" +
-    "\u00A9 2020 BERNHARD MUSEUM SERVICES, LLC"
-);
+// LAZIUS / VERSION 2.1
+// BY NICHOLAS BERNHARD
+// COPYRIGHT 2020 NDH LTD.
+
+/*
+
+TODO:20200205NJB Create quick-search function
+TODO:20200205NJB Create show-past-values functionality for arrays 
+
+*/
 
 // EVENT LISTENER WRAPPER
 document.addEventListener("DOMContentLoaded", function () {
