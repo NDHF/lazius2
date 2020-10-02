@@ -780,6 +780,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             }
                         }
                         if (Array.isArray(databaseItem[searchObjectItem])) {
+                            // CONVERT ALL STRING IN ARRAY TO LOWER-CASE
                             searchObject[searchObjectItem].forEach(function (lilItem, lilIndex) {
                                 console.log(lilItem);
                                 searchObject[searchObjectItem[lilIndex]] = lilItem.toLowerCase();
