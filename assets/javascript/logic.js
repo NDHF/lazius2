@@ -347,7 +347,6 @@ document.addEventListener("DOMContentLoaded", function () {
             if (input === "functionLaunched") {
                 let textOrStoragePrompt = prompt("Importing from file (f), " +
                     "text (t) or storage (s)?");
-                console.log(textOrStoragePrompt);
                 if ((textOrStoragePrompt === null) ||
                     ((textOrStoragePrompt.toLowerCase() !== "text") &&
                         (textOrStoragePrompt.toLowerCase() !== "storage") &&
@@ -1004,27 +1003,15 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (input !== "beginEditing") {
                         database.bufferArray.push(input);
                     }
-                    if (database.bufferArray.length < (
-                            database.dataStructureArray.length - 1)) {
+                    if (database.bufferArray.length < (database.dataStructureArray.length - 1)) {
                         let editMessage = ", <br> or else, leave blank.";
-                        userPrompt("Edit " +
-                            database.dataStructureArray[
-                                database.bufferArray.length
-                            ].parameterToDisplay +
-                            editMessage);
-                        if (database.dataStructureArray[
-                                database.bufferArray.length
-                            ].parameterInputType === "array") {
+                        userPrompt("Edit " + database.dataStructureArray[database.bufferArray.length].parameterToDisplay + editMessage);
+                        if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "array") {
                             // Widen input field for editing arrays
                             getById("input").size = 75;
-                            getById("input").value = database.databaseArray[
-                                database.bufferArray.length
-                            ][database.dataStructureArray[
-                                database.bufferArray.length
-                            ].parameterName];
+                            // getById("input").value = database.databaseArray[database.bufferArray.length][database.dataStructureArray[database.bufferArray.length].parameterName];
                         }
-                    } else if (database.bufferArray.length === (
-                            database.dataStructureArray.length - 1)) {
+                    } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
                         getById("input").removeEventListener(
                             "keyup", listenForQuit
@@ -1223,8 +1210,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let request = new XMLHttpRequest();
             request.open("GET", "./" + nameOfAutoloadFile + ".txt");
             request.responseType = "text";
-
-            let requestStatus = request.status;
 
             request.onerror = function () {
                 alert("Database could not be loaded from file. " +
