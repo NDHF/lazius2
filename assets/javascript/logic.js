@@ -5,7 +5,7 @@
 /*
 
 TODO:20200205NJB Create quick-search function
-TODO:20200205NJB Create show-past-values functionality for arrays 
+TODO:20200205NJB Create show-past-values functionality for arrays
 
 */
 
@@ -332,6 +332,43 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function autoload(nameOfAutoloadFile) {
+        if ((nameOfAutoloadFile !== null) &&
+            (nameOfAutoloadFile !== undefined)) {
+            let request = new XMLHttpRequest();
+            request.open("GET", "./" + nameOfAutoloadFile + ".txt");
+            request.responseType = "text";
+
+            request.onerror = function () {
+                alert("Database could not be loaded from file. " +
+                    "Lazius appears to be running outside of a " +
+                    "server environment.");
+                functionCurrentlyRunning = "standby";
+                getById("outputDiv").innerHTML = "";
+                printCommands();
+            };
+
+            request.onload = function () {
+                getById("input").disabled = true;
+                getById("outputDiv").innerHTML = "";
+                if (request.status === 200) {
+                    database = JSON.parse(request.response);
+                    userPrompt("Database " + database.name + " imported " +
+                        "from text file. Press 'Enter' to continue.");
+                    showLastEntry("last");
+                } else {
+                    userPrompt("Database " +
+                        localStorage.getItem("laziusAutoload") +
+                        " could not be found. Press 'Enter' to continue.");
+                }
+                functionCurrentlyRunning = "standby";
+                getById("outputDiv").innerHTML = "";
+                printCommands();
+            };
+            request.send();
+        }
+    }
+
     function importDB(input) {
         if (database !== undefined) {
             getById("input").disabled = true;
@@ -544,6 +581,46 @@ document.addEventListener("DOMContentLoaded", function () {
                 noDBErrorCatch();
             }
         }
+    }
+
+    function autoloadoff() {
+        functionCurrentlyRunning = "standby";
+        if (localStorage.getItem("laziusAutoload") === null) {
+            alert("No files have been set for autoload");
+        } else {
+            let fileToDisableFromAutoload = localStorage.getItem(
+                "laziusAutoload"
+            );
+            let turnAutoloadOff = confirm("Do you want to disable autoload " +
+                "for " + fileToDisableFromAutoload + ".txt?");
+            if (turnAutoloadOff) {
+                localStorage.removeItem("laziusAutoload");
+                if (localStorage.getItem("laziusAutoload") !== null) {
+                    alert("WARNING: Something went wrong when attempting " +
+                        "to disable autoload of the file.");
+                } else {
+                    alert(fileToDisableFromAutoload +
+                        " will no longer autoload.");
+                }
+            }
+        }
+        printCommands();
+    }
+
+    function createDownloadableFile(filename, fileContent) {
+        functionCurrentlyRunning = "standby";
+        printCommands();
+        let typeText = "text/plain;charset=UTF-8";
+        let fileText = new Blob([fileContent], {
+            type: typeText
+        });
+        let url = URL.createObjectURL(fileText);
+
+        let link = document.createElement("A");
+        link.download = filename;
+        link.href = url;
+        link.textContent = filename;
+        link.click();
     }
 
     // CORE FUNCTION MANAGEMENT START
@@ -1186,83 +1263,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 functionLauncher("add");
             }
         }
-    }
-
-    function createDownloadableFile(filename, fileContent) {
-        functionCurrentlyRunning = "standby";
-        printCommands();
-        let typeText = "text/plain;charset=UTF-8";
-        let fileText = new Blob([fileContent], {
-            type: typeText
-        });
-        let url = URL.createObjectURL(fileText);
-
-        let link = document.createElement("A");
-        link.download = filename;
-        link.href = url;
-        link.textContent = filename;
-        link.click();
-    }
-
-    function autoload(nameOfAutoloadFile) {
-        if ((nameOfAutoloadFile !== null) &&
-            (nameOfAutoloadFile !== undefined)) {
-            let request = new XMLHttpRequest();
-            request.open("GET", "./" + nameOfAutoloadFile + ".txt");
-            request.responseType = "text";
-
-            request.onerror = function () {
-                alert("Database could not be loaded from file. " +
-                    "Lazius appears to be running outside of a " +
-                    "server environment.");
-                functionCurrentlyRunning = "standby";
-                getById("outputDiv").innerHTML = "";
-                printCommands();
-            }
-
-            request.onload = function () {
-                getById("input").disabled = true;
-                getById("outputDiv").innerHTML = "";
-                if (request.status === 200) {
-                    database = JSON.parse(request.response);
-                    userPrompt("Database " + database.name + " imported " +
-                        "from text file. Press 'Enter' to continue.");
-                    showLastEntry("last");
-                } else {
-                    userPrompt("Database " +
-                        localStorage.getItem("laziusAutoload") +
-                        " could not be found. Press 'Enter' to continue.");
-                }
-                functionCurrentlyRunning = "standby";
-                getById("outputDiv").innerHTML = "";
-                printCommands();
-            };
-            request.send();
-        }
-    }
-
-    function autoloadoff() {
-        functionCurrentlyRunning = "standby";
-        if (localStorage.getItem("laziusAutoload") === null) {
-            alert("No files have been set for autoload");
-        } else {
-            let fileToDisableFromAutoload = localStorage.getItem(
-                "laziusAutoload"
-            );
-            let turnAutoloadOff = confirm("Do you want to disable autoload " +
-                "for " + fileToDisableFromAutoload + ".txt?");
-            if (turnAutoloadOff) {
-                localStorage.removeItem("laziusAutoload");
-                if (localStorage.getItem("laziusAutoload") !== null) {
-                    alert("WARNING: Something went wrong when attempting " +
-                        "to disable autoload of the file.");
-                } else {
-                    alert(fileToDisableFromAutoload +
-                        " will no longer autoload.")
-                }
-            }
-        }
-        printCommands();
     }
 
     // CORE COMMAND FUNCTIONS END
