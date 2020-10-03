@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Nicholas Bernhard">
+    <meta name="description" content="A user manual for Lazius, a browser-based inventory management program">
+    <meta name="keywords" content="manual,documentation,lazius,inventory management,Nicholas Bernhard">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" type="text/css" href="assets/style/docsStyle.css" />
     <link rel="icon" type="img/png" href="assets/images/lazius_favicon.png">
@@ -46,125 +49,183 @@
         <section id="overviewSection">
             <h1>OVERVIEW</h1>
 
-            <p><strong>Lazius</strong> (<i>lot-zee-us</i>) is a 
+            <p><strong>Lazius</strong> (<i>lot-zee-us</i>) is a
                 <strong><em>browser-based inventory management
                         program</em></strong> designed
-                for <strong><em>rapid data entry</em></strong>. 
+                for <strong><em>rapid data entry</em></strong>.
                 Adding items to the inventory does not require a mouse,
-                the <strong>Enter</strong> key moves to the next item. 
+                the <strong>Enter</strong> key moves to the next item.
                 This allows a large number of items to be entered
-                into the inventory very quickly, without the hassle of 
-                clicking between different input fields in a form. Editing 
-                entries and searching the inventory are also performed with 
+                into the inventory very quickly, without the hassle of
+                clicking between different input fields in a form. Editing
+                entries and searching the inventory are also performed with
                 the keyboard.</p>
 
-            <p>Data is stored in the <strong>JSON</strong> format, using the 
-                browser's local storage. The program does not rely on any 
-                prior libraries or frameworks. Data can be copied to the 
-                clipboard and pasted to a text file for long-term storage. 
+            <p>Data is stored in the <strong>JSON</strong> format.
+                The data may be read and written from the browser's local storage
+                for fast access. If the user is running Lazius with a local server,
+                data may also be read and written from a .txt file.
+                The program does not rely on any
+                prior libraries or frameworks. Data may also be copied to the
+                clipboard and pasted to a text file.
             </p>
         </section>
 
         <section id="programLayout">
             <h1>PROGRAM LAYOUT</h1>
 
-            <p>The <strong>Lazius</strong> database uses a database object 
+            <p>The <strong>Lazius</strong> database uses a database object
                 with the following structure:</p>
 
             <code>
                 {
-                    <br>
-                    "name":"DB Test",
-                    <br>
-                    "comments":"",
-                    <br>
-                    "contactInfo":"",
-                    <br>
-                    "dataStructureArray":[
-                    <br>
-                        {
-                            <br>
-                            "parameterName":"title",
-                            <br>
-                            "parameterToDisplay":"Title",
-                            <br>
-                            "parameterNotes":"",
-                            <br>
-                            "parameterInputType":"input",
-                            <br>
-                            "parameterAutoComplete":"no"},
-                            <br>
-                        {
-                            <br>
-                            "parameterName":"authorLastName",
-                            <br>
-                            "parameterToDisplay":"Author, Last Name",
-                            <br>
-                            "parameterNotes":"",
-                            <br>
-                            "parameterInputType":"input",
-                            <br>
-                            "parameterAutoComplete":"no"
-                            <br>
-                        },
-                        <br>
-                        {
-                            <br>
-                            "parameterName":"authorFirstName",
-                            "parameterToDisplay":"Author, First Name",
-                            "parameterNotes":"",
-                            "parameterInputType":"input",
-                            "parameterAutoComplete":"no"
-                        },
-                        {
-                            "parameterName":"location",
-                            "parameterToDisplay":"Location",
-                            "parameterNotes":"",
-                            "parameterInputType":"input",
-                            "parameterAutoComplete":"yes"
-                        },
-                        {
-                            "parameterName":"topics",
-                            "parameterToDisplay":"Topic",
-                            "parameterNotes":"",
-                            "parameterInputType":"array",
-                            "parameterAutoComplete":"no"
-                        },
-                        {
-                            "parameterName":"quantity",
-                            "parameterToDisplay":"Quantity",
-                            "parameterNotes":"",
-                            "parameterInputType":"number",
-                            "parameterAutoComplete":"no"
-                        },
-                        {
-                            "parameterName":"id",
-                            "parameterToDisplay":"ID",
-                            "parameterNotes":"",
-                            "parameterInputType":"number",
-                            "parameterAutoComplete":"no"
-                        }],
-                        "databaseArray":[
-                        {
-                            "title":"Armchair Universe",
-                            "authorLastName":"Dewdney",
-                            "authorFirstName":"A.K.",
-                            "location":"Main Shelf",
-                            "topics":["fractals","computer science","recreational mathematics","analog computers"],
-                            "quantity":1,
-                            "id":1
-                        },
-                        {
-                            "title":"Kitty and the Midnight Hour",
-                            "authorLastName":"Vaughn",
-                            "authorFirstName":"Carrie",
-                            "location":"Main Shelf",
-                            "topics":["Horror","Romance Horror","Talk Radio","Werewolves","Vampires"],
-                            "quantity":1,
-                            "id":2
-                        }],
-                        "bufferArray":[],
-                        "dateCreated":"2020-02-05T17:26:43.869Z"
+                <br>
+                "name":"DB Test",
+                <br>
+                "comments":"",
+                <br>
+                "contactInfo":"",
+                <br>
+                "dataStructureArray":[
+                <br>
+                {
+                <br>
+                "parameterName":"title",
+                <br>
+                "parameterToDisplay":"Title",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"input",
+                <br>
+                "parameterAutoComplete":"no"},
+                <br>
+                {
+                <br>
+                "parameterName":"authorLastName",
+                <br>
+                "parameterToDisplay":"Author, Last Name",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"input",
+                <br>
+                "parameterAutoComplete":"no"
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "parameterName":"authorFirstName",
+                <br>
+                "parameterToDisplay":"Author, First Name",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"input",
+                <br>
+                "parameterAutoComplete":"no"
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "parameterName":"location",
+                <br>
+                "parameterToDisplay":"Location",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"input",
+                <br>
+                "parameterAutoComplete":"yes"
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "parameterName":"topics",
+                <br>
+                "parameterToDisplay":"Topic",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"array",
+                <br>
+                "parameterAutoComplete":"no"
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "parameterName":"quantity",
+                <br>
+                "parameterToDisplay":"Quantity",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"number",
+                <br>
+                "parameterAutoComplete":"no"
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "parameterName":"id",
+                <br>
+                "parameterToDisplay":"ID",
+                <br>
+                "parameterNotes":"",
+                <br>
+                "parameterInputType":"number",
+                <br>
+                "parameterAutoComplete":"no"
+                <br>
+                }],
+                <br>
+                "databaseArray":[
+                <br>
+                {
+                <br>
+                "title":"Armchair Universe",
+                <br>
+                "authorLastName":"Dewdney",
+                <br>
+                "authorFirstName":"A.K.",
+                <br>
+                "location":"Main Shelf",
+                <br>
+                "topics":["fractals","computer science","recreational mathematics","analog computers"],
+                <br>
+                "quantity":1,
+                <br>
+                "id":1
+                <br>
+                },
+                <br>
+                {
+                <br>
+                "title":"Kitty and the Midnight Hour",
+                <br>
+                "authorLastName":"Vaughn",
+                <br>
+                "authorFirstName":"Carrie",
+                <br>
+                "location":"Main Shelf",
+                <br>
+                "topics":["Horror","Romance Horror","Talk Radio","Werewolves","Vampires"],
+                <br>
+                "quantity":1,
+                <br>
+                "id":2
+                <br>
+                }],
+                <br>
+                "bufferArray":[],
+                <br>
+                "dateCreated":"2020-02-05T17:26:43.869Z"
+                <br>
                 }
             </code>
 
@@ -176,9 +237,42 @@
                 <li>The <b>Buffer Array</b> is used to store values before they are applied to the database.</li>
             </ul>
 
-            <p>This object is stored in the browser's local storage. 
-                Local storage allocates at least 5 MB per domain, which is 
+            <p>In the above example, we have a database with the name 'DB Test.' This database is set up to store
+                information about books. The Data Structure Array contains information on the
+                properties that each item in the database can have: a <b>title</b>, the author's <b>last name</b> and
+                <b>first name</b>, the <b>location of the book</b>, <b>topics</b> covered in the book, the
+                <b>quantity</b>
+                of that book, and an <b>ID</b>. All items in a Lazius database have an ID, which is generated by
+                auto-increment.
+            </p>
+
+            <p>Notice that each property can be either a <b>string</b> (a mixture of letters and numbers),
+                an <b>array</b> (a list of sub-properties), or a <b>number</b>.
+            </p>
+
+            <p>After the Data Structure Array, the Database Array contains two items: a book on computers and recreational mathematics 
+                called <i>The Armchair Universe</i>, and the horror novel <i>Kitty and the Midnight Hour</i>, about the secret lives 
+                of werewolves and vampires in Denver.
+            </p>
+
+            <p>This object is stored in the browser's local storage.
+                Local storage allocates at least 5 MB per domain, which is
                 plenty for small-scale databases.
+            </p>
+        </section>
+
+        <section id="commandsSection">
+            <h1>COMMANDS</h1>
+
+            <p>All inventory work for Lazius is done using the keyboard. If have prior experience with a DOS
+                environment, or using the command-line
+                in general, Lazius will feel familiar to you.
+            </p>
+
+            <p>In essence, if you want to do something in Lazius, you simply tell Lazius what to do by typing it into
+                the text box. For example, if you want
+                to add an item to the inventory, you would type '<kbd>add</kbd>', which will allow you to begin entering
+                item parameters.
             </p>
         </section>
 
@@ -187,7 +281,7 @@
 
             <ul>
                 <li><strong>Developed by Nicholas Bernhard</strong></li>
-                <li>&COPY; 2019 Bernhard Museum Services, LLC</li>
+                <li>&COPY; 2020 Nicholas Bernhard</li>
             </ul>
         </section>
 
