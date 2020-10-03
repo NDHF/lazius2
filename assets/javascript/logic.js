@@ -347,13 +347,14 @@ document.addEventListener("DOMContentLoaded", function () {
             if (input === "functionLaunched") {
                 let textOrStoragePrompt = prompt("Importing from file (f), " +
                     "text (t) or storage (s)?");
-                if (((textOrStoragePrompt.toLowerCase() !== "text") &&
+                console.log(textOrStoragePrompt);
+                if ((textOrStoragePrompt === null) ||
+                    ((textOrStoragePrompt.toLowerCase() !== "text") &&
                         (textOrStoragePrompt.toLowerCase() !== "storage") &&
                         (textOrStoragePrompt.toLowerCase() !== "file") &&
                         (textOrStoragePrompt.toLowerCase() !== "f") &&
                         (textOrStoragePrompt.toLowerCase() !== "t") &&
-                        (textOrStoragePrompt.toLowerCase() !== "s")) ||
-                    (textOrStoragePrompt === null)) {
+                        (textOrStoragePrompt.toLowerCase() !== "s"))) {
                     functionCurrentlyRunning = "standby";
                     printCommands();
                 } else if ((textOrStoragePrompt.toLowerCase() === "text") ||
