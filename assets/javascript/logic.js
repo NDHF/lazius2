@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", function () {
     let functionCurrentlyRunning = "standby";
     const arrayOfFunctionNames = [
         "add", "edit", "search", "import", "param",
-        "print", "commands", "delete", "newdb", "editdb",
-        "last", "all"
+        "print", "commands", "deletedb", "newdb", "editdb",
+        "last", "all", "save", "autoload", "autoloadoff"
     ];
 
     let keylogArray = [];
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function () {
         getById("input").disabled = true;
         userPrompt("Error: No database exists, " + "<br>" +
             "or there are no items in the database." + "<br>" +
-            "A database must exist before printing to clipboard" +
+            "A database must exist before printing to clipboard." +
             "<br>" +
             "Press Enter to Continue");
         functionCurrentlyRunning = "standby";
@@ -175,7 +175,19 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             {
                 explanation: "Delete current database:",
-                name: "delete"
+                name: "deletedb"
+            },
+            {
+                explanation: "Save database to file:",
+                name: "save"
+            },
+            {
+                explanation: "Set database text file to load every time:",
+                name: "autoload"
+            },
+            {
+                explanation: "Disable autoload:",
+                name: "autoloadoff"
             }
         ];
         let commandHeading = document.createElement("H2");
@@ -246,6 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
             let tableCaptionText;
             let tableCaptionRow = document.createElement("TR");
             let tableCaptionTD = document.createElement("TD");
+
             function displayComparisonTableRow(beforeOrAfter) {
                 tableCaptionText = document.createTextNode(beforeOrAfter);
                 tableCaptionTD.appendChild(tableCaptionText);
@@ -269,7 +282,7 @@ document.addEventListener("DOMContentLoaded", function () {
             database.dataStructureArray.forEach(function (param, index) {
                 let searchResultsTD = document.createElement("TD");
                 if ((parentFunction === "editedItem") &&
-                (searchResultIndex === 1)) {
+                    (searchResultIndex === 1)) {
                     if (searchResultsArray[1][param.parameterName] !==
                         searchResultsArray[0][param.parameterName]) {
                         searchResultsTD.classList.add("highlightRed");
@@ -304,6 +317,21 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function setAutoload() {
+        let autoloadThisFile = confirm("Auto-load this database from " +
+            "a text file?");
+
+        if (autoloadThisFile) {
+            localStorage.setItem("laziusAutoload", database.name);
+            alert(database.name + " will now auto-load.");
+            functionCurrentlyRunning = "standby";
+            printCommands();
+        } else {
+            functionCurrentlyRunning = "standby";
+            printCommands();
+        }
+    }
+
     function importDB(input) {
         if (database !== undefined) {
             getById("input").disabled = true;
@@ -317,14 +345,21 @@ document.addEventListener("DOMContentLoaded", function () {
             functionCurrentlyRunning = "standby";
         } else {
             if (input === "functionLaunched") {
-                let textOrStoragePrompt = prompt("Importing from text or storage?");
-                if (((textOrStoragePrompt !== "text") &&
-                (textOrStoragePrompt !== "storage")) ||
-                (textOrStoragePrompt === null)) {
+                let textOrStoragePrompt = prompt("Importing from file (f), " +
+                    "text (t) or storage (s)?");
+                if (((textOrStoragePrompt.toLowerCase() !== "text") &&
+                        (textOrStoragePrompt.toLowerCase() !== "storage") &&
+                        (textOrStoragePrompt.toLowerCase() !== "file") &&
+                        (textOrStoragePrompt.toLowerCase() !== "f") &&
+                        (textOrStoragePrompt.toLowerCase() !== "t") &&
+                        (textOrStoragePrompt.toLowerCase() !== "s")) ||
+                    (textOrStoragePrompt === null)) {
                     functionCurrentlyRunning = "standby";
                     printCommands();
-                } else if (textOrStoragePrompt.toLowerCase() === "text") {
-                    let pasteTextDB = prompt("Paste the stringified JSON table here:");
+                } else if ((textOrStoragePrompt.toLowerCase() === "text") ||
+                    (textOrStoragePrompt.toLowerCase() === "t")) {
+                    let pasteTextDB = prompt("Paste the stringified JSON " +
+                        "table here:");
                     if (pasteTextDB === null) {
                         getById("input").disabled = false;
                         printCommands();
@@ -333,30 +368,48 @@ document.addEventListener("DOMContentLoaded", function () {
                         getById("input").disabled = true;
                         getById("outputDiv").innerHTML = "";
                         database = parsedTextArea;
-                        localStorage.setItem(database.name, JSON.stringify(database));
+                        localStorage.setItem(
+                            database.name, JSON.stringify(database)
+                        );
                         alert("Saved to local storage as " + database.name);
-                        userPrompt("Database imported. Press 'Enter' to continue.");
+                        userPrompt("Database imported. " +
+                            "Press 'Enter' to continue.");
                         showLastEntry("last");
                         functionCurrentlyRunning = "standby";
                     }
-                } else if (textOrStoragePrompt === "storage") {
-                    let getDBByNamePrompt = prompt("Enter name of database in storage:");
+                } else if ((textOrStoragePrompt.toLowerCase() === "storage") ||
+                    (textOrStoragePrompt.toLowerCase() === "s")) {
+                    let getDBByNamePrompt = prompt("Enter name of database " +
+                        "in storage:");
                     if (getDBByNamePrompt === null) {
                         functionCurrentlyRunning = "standby";
                         printCommands();
                     } else {
                         if (localStorage.getItem(getDBByNamePrompt) === null) {
-                            alert("No database by that name was found in storage.");
+                            alert("No database by that name " +
+                                "was found in storage.");
                             functionCurrentlyRunning = "standby";
                             printCommands();
                         } else {
                             getById("input").disabled = true;
                             getById("outputDiv").innerHTML = "";
-                            database = JSON.parse(localStorage.getItem(getDBByNamePrompt));
-                            userPrompt("Database " + getDBByNamePrompt + " imported. Press 'Enter' to continue.");
+                            database = JSON.parse(
+                                localStorage.getItem(getDBByNamePrompt)
+                            );
+                            userPrompt("Database " + getDBByNamePrompt +
+                                " imported. Press 'Enter' to continue.");
                             showLastEntry("last");
                             functionCurrentlyRunning = "standby";
                         }
+                    }
+                } else if ((textOrStoragePrompt.toLowerCase() === "file") ||
+                    (textOrStoragePrompt.toLowerCase() === "f")) {
+                    let getDBFileName = prompt("Enter name of text file:");
+                    if (getDBFileName === null) {
+                        functionCurrentlyRunning = "standby";
+                        printCommands();
+                    } else {
+                        autoload(getDBFileName);
                     }
                 }
             }
@@ -364,27 +417,32 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function deleteDB(input) {
-        if (input === "functionLaunched") {
-            userPrompt(
-                "You are about to delete your database." + "<br>" +
-                "Please consider making a backup." + "<br>" +
-                "Press Y to continue, press N to cancel"
-            );
-        } else if (input !== "functionLaunched") {
-            if ((input.toLowerCase() !== "y") &&
-            (input.toLowerCase() !== "n")) {
-                getById("input").value = "";
-            } else {
-                if (input.toLowerCase() === "n") {
-                    functionCurrentlyRunning = "standby";
-                    userPrompt("Please enter a function name");
-                } else if (input.toLowerCase() === "y") {
-                    database = undefined;
-                    functionCurrentlyRunning = "standby";
-                    userPrompt(
-                        "The database has been deleted." + "<br>" +
-                        "Please enter a function name."
-                    );
+
+        if (database === undefined) {
+            noDBErrorCatch();
+        } else {
+            if (input === "functionLaunched") {
+                userPrompt(
+                    "You are about to delete your database." + "<br>" +
+                    "Please consider making a backup." + "<br>" +
+                    "Press Y to continue, press N to cancel"
+                );
+            } else if (input !== "functionLaunched") {
+                if ((input.toLowerCase() !== "y") &&
+                    (input.toLowerCase() !== "n")) {
+                    getById("input").value = "";
+                } else {
+                    if (input.toLowerCase() === "n") {
+                        functionCurrentlyRunning = "standby";
+                        userPrompt("Please enter a function name");
+                    } else if (input.toLowerCase() === "y") {
+                        database = undefined;
+                        functionCurrentlyRunning = "standby";
+                        userPrompt(
+                            "The database has been deleted." + "<br>" +
+                            "Please enter a function name."
+                        );
+                    }
                 }
             }
         }
@@ -454,7 +512,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function databaseEditingLiaison(input) {
         let warningMessage = "WARNING: placeholder " +
-        "Press YES to continue, press NO to cancel.";
+            "Press YES to continue, press NO to cancel.";
+
         function createWarningPopUp() {
             let warningPopUp = confirm(warningMessage);
             if (warningPopUp === true) {
@@ -504,12 +563,22 @@ document.addEventListener("DOMContentLoaded", function () {
             importDB("functionLaunched");
         } else if (input === "commands") {
             printCommands();
-        } else if (input === "delete") {
+        } else if (input === "deletedb") {
             deleteDB("functionLaunched");
         } else if ((input === "newdb") || (input === "editdb")) {
             databaseEditingLiaison(input);
         } else if ((input === "last") || (input === "all")) {
             showLastEntry(input);
+        } else if (input === "save") {
+            if (database === undefined) {
+                noDBErrorCatch();
+            } else {
+                createDownloadableFile(database.name, JSON.stringify(database));
+            }
+        } else if (input === "autoload") {
+            setAutoload();
+        } else if (input === "autoloadoff") {
+            autoloadoff();
         }
     }
 
@@ -539,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 edit(input);
             } else if (functionCurrentlyRunning === "import") {
                 importDB(input);
-            } else if (functionCurrentlyRunning === "delete") {
+            } else if (functionCurrentlyRunning === "deletedb") {
                 deleteDB(input);
             }
         }
@@ -774,6 +843,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     let matchCounter = 0;
                     arrayOfSearchObjectKeys.forEach(function (searchObjectItem) {
                         let arrayMatch = false;
+
                         function loopSOI(soiItem) {
                             if (searchObject[searchObjectItem].includes(soiItem.toLowerCase())) {
                                 arrayMatch = true;
@@ -782,7 +852,6 @@ document.addEventListener("DOMContentLoaded", function () {
                         if (Array.isArray(databaseItem[searchObjectItem])) {
                             // CONVERT ALL STRING IN ARRAY TO LOWER-CASE
                             searchObject[searchObjectItem].forEach(function (lilItem, lilIndex) {
-                                console.log(lilItem);
                                 searchObject[searchObjectItem[lilIndex]] = lilItem.toLowerCase();
                             });
                             databaseItem[searchObjectItem].forEach(loopSOI);
@@ -867,6 +936,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function edit(input) {
         // Reset input size to default
         getById("input").size = 20;
+
         function applyEdits() {
             let editedObjectId = parseInt(getById("searchResultID").innerHTML);
             let comparisonArray = [];
@@ -878,7 +948,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (database.dataStructureArray[index].parameterInputType === "number") {
                         let objectArrayItem = parseFloat(item);
                         if (Number.isNaN(objectArrayItem) ||
-                        (objectArrayItem === undefined)) {
+                            (objectArrayItem === undefined)) {
                             objectArrayItem = 0;
                         }
                         editingObject[database.dataStructureArray[index].parameterName] = objectArrayItem;
@@ -891,9 +961,13 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             editingObject.id = editedObjectId;
             Object.keys(editingObject).forEach(function (item) {
-                database.databaseArray[editedObjectId - 1][item] = editingObject[item];
+                database.databaseArray[
+                    editedObjectId - 1
+                ][item] = editingObject[item];
             });
-            let newItem = JSON.stringify(database.databaseArray[editedObjectId - 1]);
+            let newItem = JSON.stringify(
+                database.databaseArray[editedObjectId - 1]
+            );
             comparisonArray.push(newItem);
             comparisonArray.forEach(function (item, index) {
                 comparisonArray[index] = JSON.parse(comparisonArray[index]);
@@ -911,38 +985,56 @@ document.addEventListener("DOMContentLoaded", function () {
                 userPrompt("Enter ID of item you wish to edit");
             } else {
                 if ((getById("input").type === "number") &&
-                (database.bufferArray.length === 0)) {
+                    (database.bufferArray.length === 0)) {
                     if (input === "") {
                         functionLauncher("edit");
                     } else {
-                        getById("input").removeEventListener("keyup", listenForQuit);
+                        getById("input").removeEventListener(
+                            "keyup", listenForQuit
+                        );
                         let idInput = parseInt(input);
                         getById("input").type = "input";
-                        displaySearchResults([database.databaseArray[idInput - 1]], "edit");
+                        displaySearchResults(
+                            [database.databaseArray[idInput - 1]], "edit"
+                        );
                         edit("beginEditing");
                     }
                 } else {
                     if (input !== "beginEditing") {
                         database.bufferArray.push(input);
                     }
-                    if (database.bufferArray.length < (database.dataStructureArray.length - 1)) {
+                    if (database.bufferArray.length < (
+                            database.dataStructureArray.length - 1)) {
                         let editMessage = ", <br> or else, leave blank.";
                         userPrompt("Edit " +
-                            database.dataStructureArray[database.bufferArray.length].parameterToDisplay +
+                            database.dataStructureArray[
+                                database.bufferArray.length
+                            ].parameterToDisplay +
                             editMessage);
-                        if (database.dataStructureArray[database.bufferArray.length].parameterInputType === "array") {
+                        if (database.dataStructureArray[
+                                database.bufferArray.length
+                            ].parameterInputType === "array") {
                             // Widen input field for editing arrays
                             getById("input").size = 75;
-                            getById("input").value = database.databaseArray[database.bufferArray.length][database.dataStructureArray[database.bufferArray.length].parameterName];
+                            getById("input").value = database.databaseArray[
+                                database.bufferArray.length
+                            ][database.dataStructureArray[
+                                database.bufferArray.length
+                            ].parameterName];
                         }
-                    } else if (database.bufferArray.length === (database.dataStructureArray.length - 1)) {
+                    } else if (database.bufferArray.length === (
+                            database.dataStructureArray.length - 1)) {
                         getById("input").type = "input";
-                        getById("input").removeEventListener("keyup", listenForQuit);
+                        getById("input").removeEventListener(
+                            "keyup", listenForQuit
+                        );
                         getById("input").disabled = true;
                         database.bufferArray.push(input);
                         userPrompt("Entry complete.");
                         applyEdits();
-                    } else if (database.bufferArray.length > (database.dataStructureArray.length - 1)) {
+                    } else if (database.bufferArray.length > (
+                            database.dataStructureArray.length - 1
+                        )) {
                         database.bufferArray = [];
                         // THIS SAVES THE DATABASE TO LOCAL STORAGE
                         let dbName = database.name;
@@ -966,17 +1058,27 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function loopThroughBufferArray(item, index) {
                 if (index < (database.bufferArray.length - 1)) {
-                    if (database.dataStructureArray[index].parameterInputType === "number") {
+                    if (database.dataStructureArray[
+                            index
+                        ].parameterInputType === "number") {
                         let objectArrayItem = parseFloat(item);
                         if (Number.isNaN(objectArrayItem) ||
-                        objectArrayItem === undefined) {
+                            objectArrayItem === undefined) {
                             objectArrayItem = 0;
                         }
-                        object[database.dataStructureArray[index].parameterName] = objectArrayItem;
-                    } else if (database.dataStructureArray[index].parameterInputType === "array") {
-                        object[database.dataStructureArray[index].parameterName] = item.split(",");
+                        object[database.dataStructureArray[
+                            index
+                        ].parameterName] = objectArrayItem;
+                    } else if (database.dataStructureArray[
+                            index
+                        ].parameterInputType === "array") {
+                        object[
+                            database.dataStructureArray[index].parameterName
+                        ] = item.split(",");
                     } else {
-                        object[database.dataStructureArray[index].parameterName] = item;
+                        object[
+                            database.dataStructureArray[index].parameterName
+                        ] = item;
                     }
                 }
             }
@@ -988,11 +1090,15 @@ document.addEventListener("DOMContentLoaded", function () {
                 let newlyBuiltObjectToArray = Object.values(newlyBuiltObject);
 
                 function checkObjectAgainstDatabase(objectInDatabaseArray) {
-                    let objectInDatabaseArrayToArray = Object.values(objectInDatabaseArray);
+                    let objectInDatabaseArrayToArray = Object.values(
+                        objectInDatabaseArray
+                    );
                     let mismatchCounter = 0;
 
                     function checkAgainstObjectValues(item, index) {
-                        let notLastItem = (index < newlyBuiltObjectToArray.length - 1);
+                        let notLastItem = (
+                            index < newlyBuiltObjectToArray.length - 1
+                        );
                         let theyDoNotMatch = (item !==
                             objectInDatabaseArrayToArray[index]);
                         if (notLastItem && theyDoNotMatch) {
@@ -1011,7 +1117,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
             function addItemToDatabase() {
                 database.databaseArray.push(object);
-                database.databaseArray[database.databaseArray.length - 1].id = database.databaseArray.length;
+                database.databaseArray[
+                    database.databaseArray.length - 1
+                ].id = database.databaseArray.length;
                 displaySearchResults([object], "add");
             }
             if (itemAlreadyExists) {
@@ -1020,7 +1128,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     "\n" +
                     "\n" +
                     "Do you want to add it anyway?";
-                let itemExistsButAddAnywayConfirm = confirm(matchDetectedMessage);
+                let itemExistsButAddAnywayConfirm = confirm(
+                    matchDetectedMessage
+                );
                 if (itemExistsButAddAnywayConfirm === false) {
                     userPrompt(
                         "Cancelled." +
@@ -1037,6 +1147,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 addItemToDatabase();
             }
         }
+
         function findPastAutocompleteValues(paramName) {
             buildListInOutputDiv(database.databaseArray, paramName);
         }
@@ -1048,13 +1159,24 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             if (database.bufferArray.length <
                 database.dataStructureArray.length) {
-                let paramToDisplay = database.dataStructureArray[database.bufferArray.length].parameterToDisplay;
-                let paramNotes = database.dataStructureArray[database.bufferArray.length].parameterNotes;
+                let paramToDisplay = database.dataStructureArray[
+                    database.bufferArray.length
+                ].parameterToDisplay;
+                let paramNotes = database.dataStructureArray[
+                    database.bufferArray.length
+                ].parameterNotes;
                 userPrompt("Add " + paramToDisplay + ":" + "<br>" + paramNotes);
-                if (database.dataStructureArray[database.bufferArray.length].parameterAutoComplete === "yes") {
-                    findPastAutocompleteValues(database.dataStructureArray[database.bufferArray.length].parameterName);
+                if (database.dataStructureArray[
+                        database.bufferArray.length
+                    ].parameterAutoComplete === "yes") {
+                    findPastAutocompleteValues(
+                        database.dataStructureArray[
+                            database.bufferArray.length
+                        ].parameterName);
                 }
-                if (database.dataStructureArray[database.bufferArray.length].parameterName === "id") {
+                if (database.dataStructureArray[
+                        database.bufferArray.length
+                    ].parameterName === "id") {
                     getById("input").disabled = true;
                     getById("input").value = "";
                     getById("outputDiv").innerHTML = "";
@@ -1078,9 +1200,89 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 
+    function createDownloadableFile(filename, fileContent) {
+        functionCurrentlyRunning = "standby";
+        printCommands();
+        let typeText = "text/plain;charset=UTF-8";
+        let fileText = new Blob([fileContent], {
+            type: typeText
+        });
+        let url = URL.createObjectURL(fileText);
+
+        let link = document.createElement("A");
+        link.download = filename;
+        link.href = url;
+        link.textContent = filename;
+        link.click();
+    }
+
+    function autoload(nameOfAutoloadFile) {
+        if ((nameOfAutoloadFile !== null) &&
+            (nameOfAutoloadFile !== undefined)) {
+            let request = new XMLHttpRequest();
+            request.open("GET", "./" + nameOfAutoloadFile + ".txt");
+            request.responseType = "text";
+
+            let requestStatus = request.status;
+
+            request.onerror = function () {
+                alert("Database could not be loaded from file. " +
+                    "Lazius appears to be running outside of a " +
+                    "server environment.");
+                functionCurrentlyRunning = "standby";
+                getById("outputDiv").innerHTML = "";
+                printCommands();
+            }
+
+            request.onload = function () {
+                getById("input").disabled = true;
+                getById("outputDiv").innerHTML = "";
+                if (request.status === 200) {
+                    database = JSON.parse(request.response);
+                    userPrompt("Database " + database.name + " imported " +
+                        "from text file. Press 'Enter' to continue.");
+                    showLastEntry("last");
+                } else {
+                    userPrompt("Database " +
+                        localStorage.getItem("laziusAutoload") +
+                        " could not be found. Press 'Enter' to continue.");
+                }
+                functionCurrentlyRunning = "standby";
+                getById("outputDiv").innerHTML = "";
+                printCommands();
+            };
+            request.send();
+        }
+    }
+
+    function autoloadoff() {
+        functionCurrentlyRunning = "standby";
+        if (localStorage.getItem("laziusAutoload") === null) {
+            alert("No files have been set for autoload");
+        } else {
+            let fileToDisableFromAutoload = localStorage.getItem(
+                "laziusAutoload"
+            );
+            let turnAutoloadOff = confirm("Do you want to disable autoload " +
+                "for " + fileToDisableFromAutoload + ".txt?");
+            if (turnAutoloadOff) {
+                localStorage.removeItem("laziusAutoload");
+                if (localStorage.getItem("laziusAutoload") !== null) {
+                    alert("WARNING: Something went wrong when attempting " +
+                        "to disable autoload of the file.");
+                } else {
+                    alert(fileToDisableFromAutoload +
+                        " will no longer autoload.")
+                }
+            }
+        }
+        printCommands();
+    }
+
     // CORE COMMAND FUNCTIONS END
 
     document.addEventListener("keyup", enterLogic);
     getById("bugReportButton").addEventListener("click", createBugReport);
     printCommands();
+    autoload(localStorage.getItem("laziusAutoload"));
 });

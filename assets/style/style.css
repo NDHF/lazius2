@@ -309,6 +309,15 @@ div#outputDiv table {
     margin-right: auto;
 }
 
+div#outputDiv tr {
+    padding-top: 15px;
+}
+
+div#outputDiv td {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
 textarea#importTextArea {
     display: block;
     width: 50%;
